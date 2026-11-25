@@ -1,0 +1,1393 @@
+<!doctype html>
+<html lang="sq">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#26301D">
+<meta name="robots" content="noindex, nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Prezenca">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
+<title>Prezenca KML Mobile</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap">
+<style>
+/* Layout: aplikacion me nje kolone per telefon – shirit i erret ulliri lart (si menuja e programit ne PC), lista ne mes, skeda poshte */
+:root {
+  --bg: #F1F3EC; --surface: #FFFFFF; --surface2: #E8ECE0; --ink: #1E231A; --muted: #646D5C; --line: #D8DDCF;
+  --band: #26301D; --band-ink: #E8EEDB; --band-muted: #A9B79A;
+  --olive: #4F6228; --olive-ink: #FFFFFF; --olive-soft: #E1E9D2; --khaki: #A4C06B;
+  --ok: #2E7D32; --ok-soft: #DDEFD9; --warn: #B8650A; --warn-soft: #FDEBD3; --bad: #B3261E; --bad-soft: #FADFDA;
+  --shadow: 0 1px 2px rgba(30, 36, 20, .08), 0 6px 20px rgba(30, 36, 20, .08);
+  --f-body: "Barlow", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-head: "Barlow Semi Condensed", "Barlow", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12160E; --surface: #1B2015; --surface2: #252B1E; --ink: #E5E9DD; --muted: #9BA48F; --line: #313A27;
+    --band: #0C0F09; --band-ink: #E5E9DD; --band-muted: #8E9C80;
+    --olive: #93B35A; --olive-ink: #12160E; --olive-soft: #2B3520; --khaki: #A4C06B;
+    --ok: #7CC47F; --ok-soft: #1E3220; --warn: #F0A54A; --warn-soft: #3A2B16; --bad: #F08A80; --bad-soft: #3D1E1A;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 6px 20px rgba(0, 0, 0, .3);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12160E; --surface: #1B2015; --surface2: #252B1E; --ink: #E5E9DD; --muted: #9BA48F; --line: #313A27;
+  --band: #0C0F09; --band-ink: #E5E9DD; --band-muted: #8E9C80;
+  --olive: #93B35A; --olive-ink: #12160E; --olive-soft: #2B3520; --khaki: #A4C06B;
+  --ok: #7CC47F; --ok-soft: #1E3220; --warn: #F0A54A; --warn-soft: #3A2B16; --bad: #F08A80; --bad-soft: #3D1E1A;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 6px 20px rgba(0, 0, 0, .3);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.4; -webkit-tap-highlight-color: transparent; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--band); }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--khaki); outline-offset: 2px; }
+.num, .tab-num { font-variant-numeric: tabular-nums; }
+h1, h2, h3 { font-family: var(--f-head); line-height: 1.15; text-wrap: balance; margin: 0; }
+.muted { color: var(--muted); }
+.wrap { max-width: 760px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* ---- koka ---- */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--band); color: var(--band-ink); }
+.top .wrap { padding-block: 10px 10px; display: flex; flex-direction: column; gap: 8px; }
+.brandrow { display: flex; align-items: center; gap: 10px; }
+.badge { font-family: var(--f-head); font-weight: 700; font-size: 13px; letter-spacing: .08em; background: var(--khaki); color: #1E2614; border-radius: 6px; padding: 3px 7px; }
+.brand { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.brand b { font-family: var(--f-head); font-size: 19px; font-weight: 700; letter-spacing: .01em; }
+.brand small { color: var(--band-muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.icon-btn { background: transparent; border: 0; color: var(--band-ink); width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; }
+.icon-btn:active { background: rgba(255, 255, 255, .08); }
+.datebar { display: flex; align-items: center; gap: 6px; }
+.datebar button { background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .12); color: var(--band-ink); height: 36px; min-width: 36px; border-radius: 9px; padding: 0 10px; }
+.dlabel { flex: 1; position: relative; height: 36px; border-radius: 9px; background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .12); display: flex; align-items: center; justify-content: center; font-weight: 600; overflow: hidden; }
+.dlabel input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; }
+.dlabel .past { color: var(--khaki); font-weight: 500; margin-left: 6px; font-size: 12px; }
+
+/* ---- permbajtja ---- */
+main { padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px)); }
+main .wrap { padding-block: 14px 8px; display: flex; flex-direction: column; gap: 12px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px; min-width: 0; }
+.card h2 { font-size: 18px; }
+.card h3 { font-size: 15px; letter-spacing: .02em; }
+.sec-title { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.sec-title small { color: var(--muted); }
+.eyebrow { font-family: var(--f-head); text-transform: uppercase; letter-spacing: .09em; font-size: 12px; color: var(--muted); font-weight: 600; }
+
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+.stat .v { font-family: var(--f-head); font-size: 28px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.stat .l { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.stat.ok .v { color: var(--ok); } .stat.bad .v { color: var(--bad); }
+
+.chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { flex: 0 0 auto; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 12px; font-size: 13px; white-space: nowrap; }
+.chip[aria-pressed="true"] { background: var(--olive); color: var(--olive-ink); border-color: var(--olive); }
+.pill { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 3px 10px; font-size: 12px; font-weight: 600; background: var(--surface2); color: var(--muted); }
+.pill.ok { background: var(--ok-soft); color: var(--ok); } .pill.warn { background: var(--warn-soft); color: var(--warn); } .pill.bad { background: var(--bad-soft); color: var(--bad); } .pill.olive { background: var(--olive-soft); color: var(--olive); }
+.pills { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.banner { border-radius: 12px; padding: 10px 12px; display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; font-size: 14px; }
+.banner.warn { background: var(--warn-soft); color: var(--ink); border: 1px solid color-mix(in srgb, var(--warn) 35%, transparent); }
+.banner.bad { background: var(--bad-soft); border: 1px solid color-mix(in srgb, var(--bad) 35%, transparent); }
+.banner.info { background: var(--olive-soft); border: 1px solid color-mix(in srgb, var(--olive) 30%, transparent); }
+.banner b { font-weight: 600; }
+
+.tools { display: flex; gap: 8px; align-items: center; }
+.search { flex: 1; min-width: 0; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); padding: 0 12px; }
+.btn { height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); padding: 0 14px; font-weight: 600; white-space: nowrap; }
+.btn.primary { background: var(--olive); color: var(--olive-ink); border-color: var(--olive); }
+.btn.ghost { background: transparent; }
+.btn.small { height: 32px; padding: 0 10px; font-size: 13px; }
+.btn:disabled { opacity: .5; }
+
+/* ---- lista ---- */
+.list { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.row { width: 100%; display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: center; padding: 10px 12px; background: transparent; border: 0; border-bottom: 1px solid var(--line); text-align: left; }
+.row:last-child { border-bottom: 0; }
+.row:active { background: var(--surface2); }
+.row .nr { color: var(--muted); font-size: 12px; text-align: right; font-variant-numeric: tabular-nums; }
+.row .who { min-width: 0; }
+.row .who b { display: block; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row .who small { display: block; color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row.changed { box-shadow: inset 3px 0 0 var(--khaki); }
+.row.sel { background: var(--olive-soft); }
+.row .check { width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--line); display: inline-grid; place-items: center; }
+.row.sel .check { background: var(--olive); border-color: var(--olive); }
+.row.sel .check::after { content: ""; width: 9px; height: 5px; border: 2px solid var(--olive-ink); border-top: 0; border-right: 0; transform: rotate(-45deg) translate(1px, -1px); }
+.st { --c: var(--ok); display: inline-flex; flex-direction: column; align-items: flex-end; gap: 1px; max-width: 46vw; }
+.st span { border-radius: 8px; padding: 3px 9px; font-weight: 700; font-size: 13px; background: color-mix(in srgb, var(--c) 22%, var(--surface)); border: 1px solid color-mix(in srgb, var(--c) 55%, transparent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.st.prez span { background: transparent; border-color: transparent; color: var(--ok); font-weight: 600; }
+.st small { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.st small.late { color: var(--bad); font-weight: 700; }
+.st small.soon { color: var(--warn); font-weight: 600; }
+.group-h { padding: 8px 12px; background: var(--surface2); font-family: var(--f-head); font-weight: 600; font-size: 13px; letter-spacing: .03em; display: flex; justify-content: space-between; gap: 8px; }
+
+.sendbar { position: fixed; left: 0; right: 0; bottom: calc(64px + env(safe-area-inset-bottom, 0px)); z-index: 15; pointer-events: none; }
+.sendbar .wrap { display: flex; justify-content: flex-end; padding-block: 0 8px; gap: 8px; }
+.sendbar .btn { pointer-events: auto; box-shadow: var(--shadow); height: 46px; border-radius: 23px; padding: 0 18px; }
+
+/* ---- tabela e raportit ---- */
+.tbl-wrap { overflow-x: auto; margin: 0 -2px; }
+table.rep { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+.rep th, .rep td { padding: 7px 6px; border-bottom: 1px solid var(--line); text-align: center; vertical-align: top; }
+.rep th:first-child, .rep td:first-child { text-align: left; }
+.rep thead th { font-family: var(--f-head); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
+.rep tr.zero td { color: var(--muted); }
+.rep tr.tot td { font-weight: 700; background: var(--surface2); }
+.rep td.names { text-align: left; font-size: 12px; color: var(--muted); padding-top: 0; }
+.rep td b { font-weight: 700; }
+
+.bars { display: flex; flex-direction: column; gap: 10px; }
+.bar-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; align-items: center; }
+.bar-row .lab { min-width: 0; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar-row .val { font-variant-numeric: tabular-nums; font-size: 13px; color: var(--muted); }
+.bar { grid-column: 1 / -1; height: 8px; border-radius: 4px; background: var(--surface2); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--ok); border-radius: 4px; }
+.bar i.mid { background: #A0962A; } .bar i.low { background: var(--bad); } .bar i.amt { background: var(--warn); }
+
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 14px; }
+.kv dt { color: var(--muted); } .kv dd { margin: 0; font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
+.kv .st { align-items: flex-start; }
+.sheet-foot { position: sticky; bottom: 0; background: var(--bg); border-top: 1px solid var(--line); margin: 0 -2px; padding: 10px 2px 4px; display: flex; flex-direction: column; gap: 10px; }
+a.btn { display: inline-flex; align-items: center; text-decoration: none; color: inherit; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; min-width: 0; }
+.tile .v { font-family: var(--f-head); font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.05; overflow-wrap: anywhere; }
+.tile .l { font-size: 12px; color: var(--muted); margin-top: 3px; }
+.tile.warn .v { color: var(--warn); } .tile.ok .v { color: var(--ok); } .tile.bad .v { color: var(--bad); }
+
+.ops { display: flex; flex-direction: column; }
+.op { border-bottom: 1px solid var(--line); padding: 10px 0; }
+.op:last-child { border-bottom: 0; }
+.op summary { list-style: none; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 4px 10px; align-items: center; cursor: pointer; }
+.op summary::-webkit-details-marker { display: none; }
+.op .code { font-family: var(--f-head); font-weight: 700; font-size: 15px; }
+.op .what { min-width: 0; } .op .what small { display: block; color: var(--muted); font-size: 12px; }
+.op .pp { margin: 8px 0 0 0; padding: 0; list-style: none; font-size: 13px; display: flex; flex-direction: column; gap: 4px; }
+.op .pp li { display: flex; justify-content: space-between; gap: 8px; }
+
+/* ---- skedat poshte ---- */
+.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--surface); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.tabs .wrap { display: grid; grid-template-columns: repeat(5, 1fr); padding-block: 4px 4px; }
+.tab { background: transparent; border: 0; height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 11px; color: var(--muted); font-weight: 600; border-radius: 10px; }
+.tab svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.tab[aria-current="page"] { color: var(--olive); }
+.tab[aria-current="page"] svg { stroke-width: 2.2; }
+
+/* ---- fleta poshte (bottom sheet) ---- */
+.sheet { position: fixed; inset: 0; z-index: 40; }
+.sheet .back { position: absolute; inset: 0; background: rgba(10, 14, 6, .45); opacity: 0; transition: opacity .18s; }
+.sheet .panel { position: absolute; left: 0; right: 0; bottom: 0; max-height: 92%; overflow: auto; background: var(--bg); border-radius: 18px 18px 0 0; transform: translateY(100%); transition: transform .22s ease; padding-bottom: env(safe-area-inset-bottom, 0px); }
+.sheet.open .back { opacity: 1; } .sheet.open .panel { transform: none; }
+.sheet .panel .wrap { padding-block: 10px 18px; display: flex; flex-direction: column; gap: 12px; }
+.grab { width: 40px; height: 4px; border-radius: 2px; background: var(--line); margin: 2px auto 0; }
+.stgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+.stb { --c: var(--ok); text-align: left; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); padding: 8px 10px; display: flex; flex-direction: column; gap: 1px; box-shadow: inset 4px 0 0 var(--c); min-width: 0; }
+.stb b { font-size: 14px; } .stb small { color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stb[aria-pressed="true"] { background: color-mix(in srgb, var(--c) 22%, var(--surface)); border-color: var(--c); }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 13px; color: var(--muted); font-weight: 600; }
+.field input[type=date], .field input[type=password], .field input[type=text], textarea { height: 44px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); padding: 0 12px; width: 100%; }
+textarea { height: auto; min-height: 160px; padding: 10px 12px; font-family: ui-monospace, "Cascadia Mono", Menlo, monospace; font-size: 12px; line-height: 1.45; resize: vertical; }
+.quick { display: flex; flex-wrap: wrap; gap: 6px; }
+.actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+.steps { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+
+/* ---- hyrja / kyçja ---- */
+.gate { min-height: 100%; display: flex; align-items: flex-start; justify-content: center; }
+.gate .wrap { padding-block: 28px 40px; display: flex; flex-direction: column; gap: 16px; max-width: 520px; }
+.gate h1 { font-size: 30px; }
+.gate .lead { font-size: 16px; color: var(--muted); max-width: 60ch; }
+.filebtn { position: relative; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; }
+.filebtn input { position: absolute; inset: 0; opacity: 0; }
+.err { color: var(--bad); font-weight: 600; min-height: 1.2em; }
+
+.toast { position: fixed; left: 50%; bottom: calc(140px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-weight: 600; z-index: 60; box-shadow: var(--shadow); max-width: calc(100% - 32px); text-align: center; }
+.demo-flag { background: var(--warn); color: #1E1508; font-weight: 700; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; border-radius: 6px; padding: 2px 6px; }
+@media (min-width: 700px) { .stats .v { font-size: 32px; } }
+@media (prefers-reduced-motion: reduce) { .sheet .panel, .sheet .back { transition: none; } }
+</style>
+
+</head>
+<body>
+<div id="app">
+  <header class="top" id="top" hidden>
+    <div class="wrap">
+      <div class="brandrow">
+        <span class="badge" id="unit">KML</span>
+        <div class="brand"><b id="ttl">Lista ditore</b><small id="sub"></small></div>
+        <button class="icon-btn" id="menuBtn" aria-label="Menyja">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+        </button>
+      </div>
+      <div class="datebar" id="datebar">
+        <button id="dPrev" aria-label="Dita e mëparshme">‹</button>
+        <label class="dlabel"><span id="dText"></span><input type="date" id="dInput" aria-label="Zgjidh datën"></label>
+        <button id="dNext" aria-label="Dita tjetër">›</button>
+        <button id="dToday">Sot</button>
+      </div>
+    </div>
+  </header>
+  <main id="main"></main>
+  <div class="sendbar" id="sendbar" hidden><div class="wrap"><button class="btn primary" id="sendBtn">Dërgo listën te kompjuteri</button></div></div>
+  <nav class="tabs" id="tabs" hidden>
+    <div class="wrap">
+      <button class="tab" data-tab="lista"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01"/></svg>Lista</button>
+      <button class="tab" data-tab="raporti"><svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg>Raporti</button>
+      <button class="tab" data-tab="paneli"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Paneli</button>
+      <button class="tab" data-tab="efektivi"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.6-3.4 3-5.2 6-5.2s5.4 1.8 6 5.2"/><path d="M16 4.5a3 3 0 0 1 0 6M18 14.8c1.7.6 2.7 2.4 3 5.2"/></svg>Efektivi</button>
+      <button class="tab" data-tab="ec"><svg viewBox="0 0 24 24"><path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2.4 1.2-3.8 2.4-5 .2 1.6 1 2.6 2.1 3 .2-3-.5-5.6.5-8z"/></svg>EC</button>
+    </div>
+  </nav>
+  <div class="sheet" id="sheet" hidden><div class="back" id="sheetBack"></div><div class="panel"><div class="wrap" id="sheetBody"></div></div></div>
+  <div class="toast" id="toast" hidden></div>
+</div>
+
+<script>
+'use strict';
+/* =====================================================================
+   Prezenca KML – aplikacioni per telefon.
+   Lexon kopjen rezerve te programit (Kopje_e_plote_*.zip / prezenca.xml),
+   shfaq raportet dhe lejon plotesimin e listes ditore; lista dergohet te
+   programi ne kompjuter si tekst (kodi PKML1) me email.
+   ===================================================================== */
+const GRUPET = ["Leje", "Leje pa të dr.pg.", "Leje r. veçantë", "Spital/ vizitë", "Raport", "Kurse/ b/vendi",
+  "Kurse/trajnime jashtë vendi", "Mision", "Pol Usht /Rendi", "Mungesë", "SH, J Reparti", "Shërbim Repart", "P.shërbimi", "Ndjekje Penale"];
+const KAT = ["", "Oficer", "Nënoficer", "Ushtar", "Civil"];
+const DITET = ["E Dielë", "E Hënë", "E Martë", "E Mërkurë", "E Enjte", "E Premte", "E Shtunë"];
+const MUAJT = ["Janar", "Shkurt", "Mars", "Prill", "Maj", "Qershor", "Korrik", "Gusht", "Shtator", "Tetor", "Nëntor", "Dhjetor"];
+const TABS = ["lista", "raporti", "paneli", "efektivi", "ec"];
+const TAB_T = { lista: "Lista ditore", raporti: "Raporti i Prezencës", paneli: "Paneli i komandantit", efektivi: "Efektivi", ec: "Emergjencat Civile" };
+
+const S = { db: null, xml: null, file: "", loaded: "", demo: false, key: null, kSalt: null, drafts: {}, sent: {},
+  date: todayISO(), tab: "lista", q: "", toga: "", selMode: false, sel: new Set(), pending: null, hiddenAt: 0, efQ: "",
+  // sinkronizimi me kompjuterin
+  sync: null, ck: null, pwUsed: null, outbox: [], etag: null, syncOk: 0, syncErr: null, needPw: false, pulling: false, pushing: false };
+// faqja e hostuar (GitHub Pages) – jo brenda Claude
+const HOSTED = !/claude|anthropic/i.test(location.hostname);
+
+/* ---------------- ndihmes ---------------- */
+const $ = s => document.querySelector(s);
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+function pad(n) { return String(n).padStart(2, "0"); }
+function todayISO() { const d = new Date(); return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+function toD(s) { const p = s.split("-").map(Number); return new Date(Date.UTC(p[0], p[1] - 1, p[2])); }
+function fromD(d) { return d.getUTCFullYear() + "-" + pad(d.getUTCMonth() + 1) + "-" + pad(d.getUTCDate()); }
+function addDays(s, n) { const d = toD(s); d.setUTCDate(d.getUTCDate() + n); return fromD(d); }
+function diffDays(a, b) { return Math.round((toD(a) - toD(b)) / 86400000); }
+function fmtD(s) { if (!s) return ""; const p = s.split("-"); return p[2] + "." + p[1] + "." + p[0]; }
+function fmtS(s) { if (!s) return ""; const p = s.split("-"); return p[2] + "." + p[1]; }
+function dita(s) { return DITET[toD(s).getUTCDay()]; }
+function norm(s) { return String(s == null ? "" : s).replace(/\s+/g, " ").trim(); }
+function plain(s) { return norm(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, ""); }
+function inicial(e, m) { e = norm(e); return ((e ? e[0] : "") + " " + norm(m)).trim(); }
+function emri(p) { return (norm(p.emri) + " " + norm(p.mbiemri)).trim(); }
+function pct(a, b) { return b ? Math.round(a * 100 / b) : 0; }
+function ndr(n) { return n + (n === 1 ? " ndryshim" : " ndryshime"); }
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { t.hidden = true; }, 2400); }
+function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { } }
+
+/* ---------------- ZIP + inflate ---------------- */
+function u16(b, o) { return b[o] | (b[o + 1] << 8); }
+function u32(b, o) { return (b[o] | (b[o + 1] << 8) | (b[o + 2] << 16) | (b[o + 3] << 24)) >>> 0; }
+async function unzipFind(buf, test) {
+  let e = -1;
+  for (let i = buf.length - 22; i >= Math.max(0, buf.length - 65557); i--) if (u32(buf, i) === 0x06054b50) { e = i; break; }
+  if (e < 0) throw new Error("Skedari nuk është .zip i vlefshëm.");
+  const count = u16(buf, e + 10); let p = u32(buf, e + 16);
+  for (let k = 0; k < count; k++) {
+    if (u32(buf, p) !== 0x02014b50) break;
+    const method = u16(buf, p + 10), csize = u32(buf, p + 20), nlen = u16(buf, p + 28), xlen = u16(buf, p + 30), clen = u16(buf, p + 32), loc = u32(buf, p + 42);
+    const name = new TextDecoder().decode(buf.subarray(p + 46, p + 46 + nlen));
+    p += 46 + nlen + xlen + clen;
+    if (!test(name)) continue;
+    const start = loc + 30 + u16(buf, loc + 26) + u16(buf, loc + 28);
+    const data = buf.subarray(start, start + csize);
+    if (method === 0) return data;
+    if (method !== 8) throw new Error("Kompresim i panjohur në .zip.");
+    return await inflate(data);
+  }
+  return null;
+}
+async function inflate(data) {
+  if (typeof DecompressionStream !== "undefined") {
+    try {
+      const s = new Blob([data]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+      return new Uint8Array(await new Response(s).arrayBuffer());
+    } catch (e) { /* bie te inflate ne JS */ }
+  }
+  return inflateJS(data);
+}
+// Inflate i thjeshte (RFC 1951) per shfletuesit qe s'kane DecompressionStream
+function inflateJS(src) {
+  let pos = 0, bitbuf = 0, bitcnt = 0, out = new Uint8Array(Math.max(1024, src.length * 4)), op = 0;
+  function need(n) { if (op + n > out.length) { const o = new Uint8Array(Math.max(out.length * 2, op + n)); o.set(out.subarray(0, op)); out = o; } }
+  function bits(n) { while (bitcnt < n) { if (pos >= src.length) throw new Error("Të dhëna të cunguara"); bitbuf |= src[pos++] << bitcnt; bitcnt += 8; } const v = bitbuf & ((1 << n) - 1); bitbuf >>>= n; bitcnt -= n; return v; }
+  function build(lens) {
+    const counts = new Uint16Array(16), offs = new Uint16Array(16), syms = new Uint16Array(lens.length);
+    for (const l of lens) counts[l]++;
+    counts[0] = 0;
+    for (let i = 1; i < 16; i++) offs[i] = offs[i - 1] + counts[i - 1];
+    for (let i = 0; i < lens.length; i++) if (lens[i]) syms[offs[lens[i]]++] = i;
+    return { counts, syms };
+  }
+  function decode(h) {
+    let code = 0, first = 0, index = 0;
+    for (let len = 1; len < 16; len++) {
+      code |= bits(1); const count = h.counts[len];
+      if (code - count < first) return h.syms[index + (code - first)];
+      index += count; first += count; first <<= 1; code <<= 1;
+    }
+    throw new Error("Kod i pavlefshëm");
+  }
+  const LB = [3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31, 35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258];
+  const LE = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0];
+  const DB = [1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193, 257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577];
+  const DE = [0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13];
+  let fixedL = null, fixedD = null, last = 0;
+  do {
+    last = bits(1); const type = bits(2);
+    if (type === 0) {
+      bitbuf = 0; bitcnt = 0;
+      const len = src[pos] | (src[pos + 1] << 8); pos += 4;
+      need(len); out.set(src.subarray(pos, pos + len), op); op += len; pos += len;
+      continue;
+    }
+    let lit, dist;
+    if (type === 1) {
+      if (!fixedL) {
+        const l = new Uint8Array(288); l.fill(8, 0, 144); l.fill(9, 144, 256); l.fill(7, 256, 280); l.fill(8, 280, 288);
+        fixedL = build(l); fixedD = build(new Uint8Array(30).fill(5));
+      }
+      lit = fixedL; dist = fixedD;
+    } else if (type === 2) {
+      const hlit = bits(5) + 257, hdist = bits(5) + 1, hclen = bits(4) + 4;
+      const ord = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];
+      const cl = new Uint8Array(19);
+      for (let i = 0; i < hclen; i++) cl[ord[i]] = bits(3);
+      const ch = build(cl), lens = new Uint8Array(hlit + hdist);
+      for (let i = 0; i < hlit + hdist;) {
+        const sym = decode(ch);
+        if (sym < 16) lens[i++] = sym;
+        else {
+          let rep = 0, val = 0;
+          if (sym === 16) { val = lens[i - 1]; rep = 3 + bits(2); } else if (sym === 17) rep = 3 + bits(3); else rep = 11 + bits(7);
+          while (rep--) lens[i++] = val;
+        }
+      }
+      lit = build(lens.subarray(0, hlit)); dist = build(lens.subarray(hlit));
+    } else throw new Error("Bllok i pavlefshëm");
+    for (;;) {
+      const sym = decode(lit);
+      if (sym < 256) { need(1); out[op++] = sym; }
+      else if (sym === 256) break;
+      else {
+        const li = sym - 257, len = LB[li] + bits(LE[li]);
+        const di = decode(dist), d = DB[di] + bits(DE[di]);
+        need(len);
+        for (let k = 0; k < len; k++, op++) out[op] = out[op - d];
+      }
+    }
+  } while (!last);
+  return out.subarray(0, op);
+}
+
+/* ---------------- leximi i te dhenave (prezenca.xml) ---------------- */
+function kids(el, n) { const r = []; if (!el) return r; for (const c of el.children) if (c.localName === n) r.push(c); return r; }
+function kid(el, n) { return kids(el, n)[0] || null; }
+function txt(el, n) { const k = kid(el, n); return k ? k.textContent : ""; }
+function at(el, n) { return el.getAttribute(n) || ""; }
+function parseDb(xml) {
+  const doc = new DOMParser().parseFromString(xml, "application/xml");
+  const root = doc.documentElement;
+  if (!root || root.localName !== "PrezencaKML") throw new Error("Ky skedar nuk është kopje e programit Prezenca KML.");
+  const s = kid(root, "Settings");
+  const db = {
+    njesia: norm(txt(s, "Njesia")) || "KML", emri: norm(txt(s, "EmriPlote")), emailTe: norm(txt(s, "EmailTe")),
+    togat: txt(s, "Togat").split(/\r?\n/).map(norm).filter(Boolean),
+    syncApplied: txt(s, "SyncApplied").split(",").map(norm).filter(Boolean), syncKoha: norm(txt(s, "SyncKoha")),
+    hash: norm(txt(s, "FjalekalimiHash")), salt: norm(txt(s, "FjalekalimiKripa")), rhash: norm(txt(s, "KodiRikthimitHash")), rsalt: norm(txt(s, "KodiRikthimitKripa")),
+    statuset: kids(kid(root, "Statuset"), "Status").map(x => ({ kodi: at(x, "Kodi"), pershkrimi: at(x, "Pershkrimi"), grupi: at(x, "Grupi"), prap: at(x, "Prapashtesa"), afat: at(x, "KerkonAfat") === "true", tre: at(x, "TreVakte") === "true", ngjyra: at(x, "Ngjyra") || "#8A9A70" })),
+    gradat: kids(kid(root, "Gradat"), "Grada").map(x => ({ g: norm(at(x, "Grada")), k: +at(x, "Kategoria") || 0 })),
+    persons: kids(kid(root, "Efektivi"), "Person").map(x => ({ id: +at(x, "Id"), grada: norm(at(x, "Grada")), emri: at(x, "Emri"), mbiemri: at(x, "Mbiemri"), toga: norm(at(x, "Toga")), hyrja: at(x, "Hyrja") || null, aktiv: at(x, "Aktiv") !== "false", largimi: at(x, "Largimi") || null, rendi: +at(x, "Rendi") || 0, atesia: norm(at(x, "Atesia")), funksioni: norm(at(x, "Funksioni")), telefoni: norm(at(x, "Telefoni")) })),
+    days: kids(kid(root, "Regjistri"), "Dita").map(x => ({ d: at(x, "d"), e: kids(x, "e").map(e => ({ p: +at(e, "p"), g: at(e, "g"), n: at(e, "n"), m: at(e, "m"), s: at(e, "s"), a: at(e, "a") || null })) })).filter(d => d.d).sort((a, b) => a.d < b.d ? -1 : a.d > b.d ? 1 : 0),
+    ec: parseEc(kid(root, "EC"))
+  };
+  index(db);
+  return db;
+}
+function parseEc(el) {
+  const y = new Date().getFullYear();
+  const ec = { ops: [], pj: [], llojet: [], nga: y + "-01-01", deri: y + "-12-31", limiti: 30 };
+  if (!el) return ec;
+  ec.ops = kids(kid(el, "Operacionet"), "Op").map(x => ({ nr: +at(x, "Nr"), lloji: norm(at(x, "Lloji")), qarku: norm(at(x, "Qarku")), vendi: norm(at(x, "Vendi")), fillimi: at(x, "Fillimi") || null, mbarimi: at(x, "Mbarimi") || null, urdhri: norm(at(x, "Urdhri")), shenime: norm(at(x, "Shenime")) }));
+  ec.pj = kids(kid(el, "Pjesemarrja"), "P").map(x => ({ id: +at(x, "Id"), p: +at(x, "p"), op: +at(x, "op"), nga: at(x, "nga") || null, deri: at(x, "deri") || null, sh: norm(at(x, "sh")) }));
+  ec.llojet = txt(el, "Llojet").split(/\r?\n/).map(norm).filter(Boolean);
+  ec.nga = norm(txt(el, "PeriudhaNgaStr")) || ec.nga; ec.deri = norm(txt(el, "PeriudhaDeriStr")) || ec.deri;
+  ec.limiti = +txt(el, "Limiti") || 30;
+  return ec;
+}
+function index(db) {
+  db.dayMap = new Map(db.days.map(d => [d.d, d]));
+  db.pById = new Map(db.persons.map(p => [p.id, p]));
+  db.stMap = new Map(db.statuset.map(s => [s.kodi.toLowerCase(), s]));
+  db.katMap = new Map(db.gradat.map(g => [g.g.toLowerCase(), g.k]));
+}
+function kat(g) { return S.db.katMap.get(norm(g).toLowerCase()) || 0; }
+function sdef(code) { return code ? S.db.stMap.get(norm(code).toLowerCase()) || null : null; }
+function stColor(code) { const s = sdef(code); return s ? s.ngjyra : "#8A9A70"; }
+function lastSaved() { const d = S.db.days; return d.length ? d[d.length - 1].d : null; }
+
+/* ---------------- dita (si LoadDay ne program) ---------------- */
+function baseDay(date) {
+  const db = S.db, rec = db.dayMap.get(date), today = todayISO();
+  if (rec) return { saved: true, from: null, rows: rec.e.map(e => ({ pid: e.p, grada: norm(e.g), emri: e.n || "", mbiemri: e.m || "", s: (!e.s || e.s === "Prezent") ? "" : e.s, a: e.a })) };
+  let prev = null;
+  for (const d of db.days) { if (d.d < date) prev = d; else break; }
+  const map = new Map(); if (prev) for (const e of prev.e) map.set(e.p, e);
+  const past = date < today;
+  const roster = (past
+    ? db.persons.filter(p => (!p.hyrja || p.hyrja <= date) && (p.aktiv || (p.largimi ? p.largimi > date : map.has(p.id))))
+    : db.persons.filter(p => p.aktiv)).slice().sort((a, b) => a.rendi - b.rendi || a.id - b.id);
+  const rows = [];
+  for (const p of roster) {
+    if (p.hyrja && p.hyrja > date) continue;
+    const r = { pid: p.id, grada: p.grada, emri: p.emri, mbiemri: p.mbiemri, s: "", a: null };
+    const e = map.get(p.id);
+    if (e) {
+      if (e.g) r.grada = norm(e.g);
+      r.s = (!e.s || e.s === "Prezent") ? "" : e.s; r.a = e.a;
+      if (past && r.a && r.a < date) { r.s = ""; r.a = null; }
+    }
+    rows.push(r);
+  }
+  return { saved: false, from: prev ? prev.d : null, past, noRecord: past && !prev, rows };
+}
+function dayRows(date) {
+  const b = baseDay(date), dr = S.drafts[date] || {};
+  b.rows = b.rows.map(r => { const o = dr[r.pid]; return o ? Object.assign({}, r, { s: o.s, a: o.a, changed: true, base: { s: r.s, a: r.a } }) : r; });
+  b.changes = b.rows.filter(r => r.changed).length;
+  return b;
+}
+function setDraft(date, pid, s, a, id) {
+  const base = baseDay(date).rows.find(r => r.pid === pid);
+  const dr = S.drafts[date] || (S.drafts[date] = {});
+  if (base && norm(base.s) === norm(s) && (base.a || null) === (a || null)) delete dr[pid];
+  else dr[pid] = { s: s, a: a || null, id: id || null };
+  if (!Object.keys(dr).length) delete S.drafts[date];
+  persistSoon();
+}
+
+/* ---------------- raporti (si Logic.Compute) ---------------- */
+function compute(rows) {
+  const rep = { org: [0, 0, 0], mung: [0, 0, 0], prez: [0, 0, 0], rows: GRUPET.map(g => ({ g, n: [0, 0, 0], emrat: [[], [], []] })), efektivi: 0, njeVakt: 0, treVakte: 0, sherbim: 0 };
+  for (const r of rows) {
+    if (!norm(r.emri) && !norm(r.mbiemri)) continue;
+    const has = norm(r.mbiemri) !== "";
+    if (has) rep.efektivi++;
+    const st = norm(r.s), sd = sdef(st);
+    if (has) {
+      const civil = norm(r.grada).toLowerCase() === "civil";
+      if (st === "" && !civil) rep.njeVakt++;
+      if (sd && sd.tre) rep.treVakte++;
+      if (/^(bizë|feken)$/i.test(st)) rep.treVakte++;
+      if (st.toLowerCase() === "sh") rep.sherbim++;
+    }
+    const k = kat(r.grada);
+    if (k < 1 || k > 3) continue;
+    rep.org[k - 1]++;
+    if (!sd || sd.grupi === "") continue;
+    const row = rep.rows.find(x => x.g === sd.grupi);
+    if (!row) continue;
+    row.n[k - 1]++; row.emrat[k - 1].push(inicial(r.emri, r.mbiemri) + (sd.prap || ""));
+  }
+  for (let i = 0; i < 3; i++) { rep.mung[i] = rep.rows.reduce((s, x) => s + x.n[i], 0); rep.prez[i] = rep.org[i] - rep.mung[i]; }
+  rep.neRresht = rep.njeVakt + rep.sherbim;
+  rep.orgT = rep.org[0] + rep.org[1] + rep.org[2]; rep.mungT = rep.mung[0] + rep.mung[1] + rep.mung[2]; rep.prezT = rep.orgT - rep.mungT;
+  return rep;
+}
+function paralajmerim(r, date) {
+  const st = norm(r.s);
+  if (st === "") return r.a ? "Prezent, por ka afat – fshi afatin" : "";
+  const sd = sdef(st);
+  if (!r.a) return (sd && !sd.afat) ? "" : "Vendos afatin";
+  const d = diffDays(r.a, date);
+  if (d < 0) return "Afati ka mbaruar – hiq statusin!";
+  if (d === 0) return "Mbaron sot";
+  if (d === 1) return "Mbaron nesër";
+  if (d <= 3) return "Mbaron pas " + d + " ditësh";
+  return "";
+}
+function togaOf(pid) { const p = S.db.pById.get(pid); return p ? p.toga : ""; }
+
+/* ---------------- Emergjencat Civile (si EcCalc) ---------------- */
+function ecCalc() {
+  const ec = S.db.ec, t = todayISO(), N = ec.nga, D = ec.deri;
+  const ops = ec.ops.slice().sort((a, b) => a.nr - b.nr).map(o => {
+    const r = { o, kodi: "EC-" + String(o.nr).padStart(3, "0"), fundi: null, kohe: 0, statusi: "", neP: false, diteP: 0, rows: [], efektivi: 0, dn: 0, sot: 0 };
+    if (o.fillimi) {
+      r.fundi = o.mbarimi || (o.fillimi > t ? o.fillimi : t);
+      r.kohe = diffDays(r.fundi, o.fillimi) + 1;
+      r.statusi = o.fillimi > t ? "I planifikuar" : (!o.mbarimi || o.mbarimi >= t) ? "Në vazhdim" : "Përfunduar";
+      r.neP = o.fillimi <= D && r.fundi >= N;
+      if (r.neP) r.diteP = diffDays(r.fundi < D ? r.fundi : D, o.fillimi > N ? o.fillimi : N) + 1;
+    }
+    return r;
+  });
+  const opMap = new Map(ops.map(o => [o.o.nr, o]));
+  const pers = new Map();
+  const seen = new Set();
+  const overlap = (r, a, b) => { if (!r.nga || !r.deri) return 0; const s = r.nga > a ? r.nga : a, e = r.deri < b ? r.deri : b; return Math.max(0, diffDays(e, s) + 1); };
+  for (const p of ec.pj) {
+    const op = opMap.get(p.op), person = S.db.pById.get(p.p);
+    if (!op || !person) continue;
+    const r = { p, op, person, nga: p.nga || op.o.fillimi, deri: null, dite: 0, diteP: 0, ne: false };
+    if (r.nga) r.deri = p.deri || op.fundi;
+    if (r.nga && r.deri) { r.dite = Math.max(0, diffDays(r.deri, r.nga) + 1); r.diteP = overlap(r, N, D); r.ne = r.nga <= t && r.deri >= t; }
+    op.rows.push(r); op.dn += r.dite; if (r.ne) op.sot++;
+    const k = p.p + ":" + p.op; if (!seen.has(k)) { seen.add(k); op.efektivi++; }
+    let x = pers.get(p.p); if (!x) { x = { person, diteGj: 0, diteP: 0, ops: new Set(), opsP: new Set(), fundit: null, neOp: false, rows: [] }; pers.set(p.p, x); }
+    x.diteGj += r.dite; x.diteP += r.diteP; x.ops.add(p.op); if (r.diteP > 0) x.opsP.add(p.op);
+    if (r.deri && (!x.fundit || r.deri > x.fundit)) x.fundit = r.deri;
+    if (r.ne) x.neOp = true; x.rows.push(r);
+  }
+  const aktive = S.db.persons.filter(p => p.aktiv).length;
+  const list = [...pers.values()];
+  return {
+    ops, pers, N, D, limiti: ec.limiti,
+    opNeP: ops.filter(o => o.neP).length,
+    dnP: list.reduce((s, x) => s + x.diteP, 0),
+    pjesP: list.filter(x => x.diteP > 0).length,
+    angazh: aktive ? list.filter(x => x.diteP > 0 && x.person.aktiv).length / aktive : 0,
+    neVazhdim: ops.filter(o => o.statusi === "Në vazhdim"),
+    neOpSot: list.filter(x => x.neOp),
+    top: list.filter(x => x.diteP > 0).sort((a, b) => b.diteP - a.diteP || a.person.rendi - b.person.rendi).slice(0, 10),
+    dnGj: list.reduce((s, x) => s + x.diteGj, 0)
+  };
+}
+
+/* ---------------- kodi per programin ne kompjuter ---------------- */
+function makeToken(date, rows) {
+  const parts = rows.map(r => {
+    let x = String(r.pid);
+    if (norm(r.s) || r.a) { x += "=" + encodeURIComponent(norm(r.s)); if (r.a) x += "@" + r.a.replace(/-/g, ""); }
+    return x;
+  });
+  return "PKML1;D=" + date + ";N=" + parts.length + ";" + parts.join(",") + ";END";
+}
+function sendText(date) {
+  const d = dayRows(date), rep = compute(d.rows);
+  const L = [];
+  L.push("Lista ditore – " + S.db.njesia + " – " + dita(date) + ", " + fmtD(date));
+  L.push("Organikë " + rep.orgT + " · Prezent " + rep.prezT + " · Mungojnë " + rep.mungT);
+  L.push("");
+  for (const g of rep.rows) {
+    const n = g.n[0] + g.n[1] + g.n[2];
+    if (n) L.push(g.g + " (" + n + "): " + g.emrat[0].concat(g.emrat[1], g.emrat[2]).join(", "));
+  }
+  L.push("");
+  L.push("Kodi për programin Prezenca KML (Lista ditore → \"Nga telefoni\"):");
+  L.push(makeToken(date, d.rows));
+  return L.join("\n");
+}
+function tokenHash(date) { const t = makeToken(date, dayRows(date).rows); let h = 0; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0; return String(h); }
+
+/* ---------------- ruajtja e sigurt ne telefon ---------------- */
+const enc = new TextEncoder(), dec = new TextDecoder();
+function b64ToBytes(b) { const s = atob(b); const u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u; }
+function bytesToB64(u) { let s = ""; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); }
+function normCode(c) { return String(c || "").toUpperCase().replace(/[^\p{L}\p{N}]/gu, ""); }
+async function pbkdf2(secret, salt, iter) {
+  const k = await crypto.subtle.importKey("raw", enc.encode(secret), "PBKDF2", false, ["deriveBits"]);
+  return new Uint8Array(await crypto.subtle.deriveBits({ name: "PBKDF2", salt, iterations: iter, hash: "SHA-256" }, k, 256));
+}
+async function checkPc(secret, hashB64, saltB64) {
+  if (!hashB64 || !saltB64) return false;
+  try { return bytesToB64(await pbkdf2(secret, b64ToBytes(saltB64), 60000)) === hashB64; } catch (e) { return false; }
+}
+async function aesKey(secret, salt) {
+  const k = await crypto.subtle.importKey("raw", enc.encode(secret), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: 150000, hash: "SHA-256" }, k, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+}
+async function gz(bytes, compress) {
+  if (typeof CompressionStream === "undefined") return null;
+  const s = new Blob([bytes]).stream().pipeThrough(compress ? new CompressionStream("gzip") : new DecompressionStream("gzip"));
+  return new Uint8Array(await new Response(s).arrayBuffer());
+}
+function idbOpen() {
+  return new Promise((res, rej) => {
+    let r; try { r = indexedDB.open("prezenca-kml", 1); } catch (e) { rej(e); return; }
+    r.onupgradeneeded = () => r.result.createObjectStore("kv");
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  });
+}
+async function idb(mode, fn) {
+  try {
+    const db = await idbOpen();
+    return await new Promise((res, rej) => { const q = fn(db.transaction("kv", mode).objectStore("kv")); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); });
+  } catch (e) { return null; }
+}
+const idbGet = k => idb("readonly", s => s.get(k));
+const idbPut = (k, v) => idb("readwrite", s => s.put(v, k));
+const idbDel = k => idb("readwrite", s => s.delete(k));
+let persistT = 0;
+function persistSoon() { clearTimeout(persistT); persistT = setTimeout(persist, 350); }
+async function persist() {
+  if (S.demo || !S.db) return;
+  try {
+    let bytes = enc.encode(JSON.stringify({ xml: S.xml, file: S.file, loaded: S.loaded, drafts: S.drafts, sent: S.sent, sync: S.sync, outbox: S.outbox, etag: S.etag }));
+    let z = false; try { const g = await gz(bytes, true); if (g) { bytes = g; z = true; } } catch (e) { }
+    let rec;
+    if (S.key) {
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      rec = { v: 1, enc: true, gz: z, salt: S.kSalt, iv: bytesToB64(iv), blob: await crypto.subtle.encrypt({ name: "AES-GCM", iv }, S.key, bytes) };
+    } else rec = { v: 1, enc: false, gz: z, blob: bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) };
+    await idbPut("data", rec);
+  } catch (e) { /* ruajtja ne telefon deshtoi – te dhenat mbeten ne kujtese */ }
+}
+async function readStored(secret) {
+  const rec = await idbGet("data");
+  if (!rec) return null;
+  let bytes;
+  if (rec.enc) {
+    const tries = [secret, normCode(secret)];
+    for (const t of tries) {
+      if (!t) continue;
+      try {
+        const k = await aesKey(t, b64ToBytes(rec.salt));
+        bytes = new Uint8Array(await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64ToBytes(rec.iv) }, k, rec.blob));
+        S.key = k; S.kSalt = rec.salt; S.pwUsed = t; break;
+      } catch (e) { }
+    }
+    if (!bytes) throw new Error("Fjalëkalimi nuk është i saktë.");
+  } else bytes = new Uint8Array(rec.blob);
+  if (rec.gz) bytes = await gz(bytes, false);
+  return JSON.parse(dec.decode(bytes));
+}
+function usePayload(p) {
+  S.xml = p.xml; S.file = p.file || ""; S.loaded = p.loaded || ""; S.drafts = p.drafts || {}; S.sent = p.sent || {};
+  S.sync = p.sync || null; S.outbox = p.outbox || []; S.etag = p.etag || null;
+  S.db = parseDb(p.xml); S.demo = false;
+}
+
+/* ---------------- sinkronizimi me kompjuterin (GitHub, i enkriptuar) ----------------
+   Formati (i njejte me programin ne kompjuter): "PKS1" | kripa(16) | iv(16) | AES-256-CBC | HMAC-SHA256(32)
+   celesat = PBKDF2-SHA256(fjalekalimi i programit, kripa, 120000) -> 64 bajte */
+async function cloudKeys(secret, salt) {
+  const k = await crypto.subtle.importKey("raw", enc.encode(secret), "PBKDF2", false, ["deriveBits"]);
+  const bits = new Uint8Array(await crypto.subtle.deriveBits({ name: "PBKDF2", salt, iterations: 120000, hash: "SHA-256" }, k, 512));
+  return {
+    aes: await crypto.subtle.importKey("raw", bits.slice(0, 32), "AES-CBC", false, ["encrypt", "decrypt"]),
+    mac: await crypto.subtle.importKey("raw", bits.slice(32), { name: "HMAC", hash: "SHA-256" }, false, ["sign", "verify"])
+  };
+}
+async function gunzip(b) {
+  if (typeof DecompressionStream !== "undefined") {
+    try { return new Uint8Array(await new Response(new Blob([b]).stream().pipeThrough(new DecompressionStream("gzip"))).arrayBuffer()); } catch (e) { }
+  }
+  let p = 10; const flg = b[3];
+  if (flg & 4) p += 2 + (b[p] | (b[p + 1] << 8));
+  if (flg & 8) while (b[p++]) { }
+  if (flg & 16) while (b[p++]) { }
+  if (flg & 2) p += 2;
+  return inflateJS(b.subarray(p, b.length - 8));
+}
+async function cloudDecrypt(keys, blob) {
+  if (blob.length < 84 || dec.decode(blob.subarray(0, 4)) !== "PKS1") throw new Error("Të dhëna të panjohura");
+  const n = blob.length - 32;
+  if (!await crypto.subtle.verify("HMAC", keys.mac, blob.subarray(n), blob.subarray(0, n))) throw new Error("Fjalëkalimi nuk përputhet");
+  const plain = new Uint8Array(await crypto.subtle.decrypt({ name: "AES-CBC", iv: blob.subarray(20, 36) }, keys.aes, blob.subarray(36, n)));
+  return plain[0] === 1 ? await gunzip(plain.subarray(1)) : plain.subarray(1);
+}
+async function cloudEncrypt(keys, salt, data) {
+  let flag = 0, body = data;
+  try { const g = await gz(data, true); if (g) { body = g; flag = 1; } } catch (e) { }
+  const plain = new Uint8Array(body.length + 1); plain[0] = flag; plain.set(body, 1);
+  const iv = crypto.getRandomValues(new Uint8Array(16));
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-CBC", iv }, keys.aes, plain));
+  const head = new Uint8Array(36 + ct.length); head.set(enc.encode("PKS1"), 0); head.set(salt, 4); head.set(iv, 20); head.set(ct, 36);
+  const mac = new Uint8Array(await crypto.subtle.sign("HMAC", keys.mac, head));
+  const out = new Uint8Array(head.length + 32); out.set(head); out.set(mac, head.length);
+  return out;
+}
+function b64uToBytes(s) { s = s.replace(/-/g, "+").replace(/_/g, "/"); while (s.length % 4) s += "="; return b64ToBytes(s); }
+function ghPath(path) { return S.sync.api.replace(/\/+$/, "") + "/repos/" + encodeURIComponent(S.sync.owner) + "/" + encodeURIComponent(S.sync.repo) + "/contents/" + path; }
+async function gh(method, path, o) {
+  o = o || {};
+  const h = { "Authorization": "Bearer " + S.sync.token, "Accept": o.raw ? "application/vnd.github.raw+json" : "application/vnd.github+json" };
+  if (o.etag) h["If-None-Match"] = o.etag;
+  let body;
+  if (o.json) { h["Content-Type"] = "application/json"; body = JSON.stringify(o.json); }
+  return fetch(ghPath(path), { method, headers: h, body, cache: "no-store" });
+}
+function netErr(e) { return (navigator.onLine === false || (e && e.name === "TypeError")) ? "Pa internet – do të provohet vetë sapo të lidhet" : (e && e.message) || String(e); }
+// gjendja e re nga kompjuteri
+async function pull(force) {
+  if (!S.sync || !S.ck || S.pulling || S.needPw) return;
+  S.pulling = true;
+  try {
+    const r = await gh("GET", "data/snapshot.bin", { raw: true, etag: force ? null : S.etag });
+    if (r.status === 304) { S.syncOk = Date.now(); S.syncErr = null; return; }
+    if (r.status === 401) throw new Error("Lidhja me kompjuterin nuk vlen më. Dërgoni lidhjen e re nga programi (Cilësimet → Telefoni).");
+    if (!r.ok) throw new Error("GitHub " + r.status);
+    const blob = new Uint8Array(await r.arrayBuffer());
+    let xml;
+    try { xml = dec.decode(await cloudDecrypt(S.ck, blob)); }
+    catch (e) { S.needPw = true; throw new Error("Fjalëkalimi i programit ka ndryshuar. Shkruani fjalëkalimin e ri."); }
+    S.etag = r.headers.get("ETag");
+    applySnapshot(xml);
+    S.syncOk = Date.now(); S.syncErr = null;
+  } catch (e) { S.syncErr = netErr(e); }
+  finally { S.pulling = false; syncUi(); }
+}
+function applySnapshot(xml) {
+  const db = parseDb(xml), applied = new Set(db.syncApplied), waiting = new Set(S.outbox.map(o => o.id));
+  S.xml = xml; S.db = db; S.demo = false; S.file = "Sinkronizim me kompjuterin";
+  for (const d of Object.keys(S.drafts)) {
+    const dr = S.drafts[d], base = baseDay(d).rows;
+    for (const pid of Object.keys(dr)) {
+      const x = dr[pid], b = base.find(r => r.pid === +pid);
+      if ((x.id && applied.has(x.id) && !waiting.has(x.id)) || (b && norm(b.s) === norm(x.s) && (b.a || null) === (x.a || null))) delete dr[pid];
+    }
+    if (!Object.keys(dr).length) delete S.drafts[d];
+  }
+  persistSoon();
+  const ae = document.activeElement;
+  if (ae && ae.tagName === "INPUT" && $("#main").contains(ae)) S.renderLater = true; else render();
+}
+// dergimi i ndryshimeve te telefonit
+async function pushOutbox() {
+  if (!S.sync || !S.ck || S.pushing || S.needPw || !S.outbox.length) return;
+  S.pushing = true;
+  try {
+    const salt = b64ToBytes(S.sync.salt);
+    while (S.outbox.length) {
+      const it = S.outbox[0];
+      const blob = await cloudEncrypt(S.ck, salt, enc.encode(JSON.stringify({ v: 1, id: it.id, date: it.date, ts: it.ts, ch: it.ch })));
+      const r = await gh("PUT", "inbox/" + it.id + ".bin", { json: { message: "Telefoni: lista " + it.date, content: bytesToB64(blob) } });
+      if (r.status === 401) throw new Error("Lidhja me kompjuterin nuk vlen më. Dërgoni lidhjen e re nga programi (Cilësimet → Telefoni).");
+      if (!r.ok && r.status !== 422) throw new Error("GitHub " + r.status);
+      S.outbox.shift();
+      persistSoon();
+    }
+    S.syncErr = null;
+  } catch (e) { S.syncErr = netErr(e); }
+  finally { S.pushing = false; syncUi(); }
+}
+async function syncNow(force) { await pushOutbox(); await pull(force); }
+let syncSig = "";
+function syncUi() {
+  if (!S.db || $("#top").hidden) return;
+  const sig = [S.syncErr, S.needPw, S.outbox.length, JSON.stringify(S.drafts[S.date] || {})].join("|");
+  if (sig === syncSig) return;
+  syncSig = sig;
+  const ae = document.activeElement;
+  if (ae && ae.tagName === "INPUT" && $("#main").contains(ae)) S.renderLater = true; else render();
+}
+function newId() { return Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8); }
+// ndryshimet e listes: ruhen ne telefon dhe (kur ka lidhje) dergohen vete te kompjuteri
+function commitChanges(date, list) {
+  const id = S.sync ? newId() : null, ch = [];
+  for (const x of list) { setDraft(date, x.pid, x.s, x.a, id); ch.push({ p: x.pid, s: norm(x.s), a: x.s ? (x.a || null) : null }); }
+  if (S.sync && ch.length) { S.outbox.push({ id, date, ts: new Date().toISOString(), ch }); persistSoon(); pushOutbox(); }
+}
+function syncPills(date) {
+  if (!S.sync) return [];
+  const out = [], dr = S.drafts[date] || {}, inOut = new Set(S.outbox.map(o => o.id));
+  let unsent = 0, waiting = 0;
+  for (const pid of Object.keys(dr)) { if (dr[pid].id && inOut.has(dr[pid].id)) unsent++; else waiting++; }
+  if (S.needPw) out.push('<span class="pill bad">Fjalëkalimi ka ndryshuar</span>');
+  else if (S.syncErr) out.push('<span class="pill warn">' + esc(S.syncErr.length > 40 ? "Pa lidhje me kompjuterin" : S.syncErr) + "</span>");
+  if (unsent) out.push('<span class="pill warn">' + ndr(unsent) + " pa dërguar</span>");
+  if (waiting) out.push('<span class="pill olive">' + ndr(waiting) + " në pritje të kompjuterit</span>");
+  if (!unsent && !waiting && !S.syncErr && !S.needPw) out.push('<span class="pill ok">Sinkronizuar me kompjuterin</span>');
+  return out;
+}
+async function pairWith(code, pw) {
+  const blob = b64uToBytes(code);
+  let cfg = null, used = null;
+  for (const t of [pw, normCode(pw)]) {
+    if (!t) continue;
+    try { const k = await cloudKeys(t, blob.subarray(4, 20)); cfg = JSON.parse(dec.decode(await cloudDecrypt(k, blob))); used = t; break; } catch (e) { }
+  }
+  if (!cfg) throw new Error("Fjalëkalimi nuk është i saktë (ose lidhja është e dëmtuar).");
+  S.sync = { api: cfg.api || "https://api.github.com", owner: cfg.owner, repo: cfg.repo, token: cfg.token, salt: cfg.salt };
+  S.ck = await cloudKeys(used, b64ToBytes(cfg.salt)); S.pwUsed = used; S.needPw = false;
+  let r;
+  try { r = await gh("GET", "data/snapshot.bin", { raw: true }); } catch (e) { S.sync = null; throw new Error("Nuk ka internet. Provoni përsëri kur telefoni të jetë i lidhur."); }
+  if (!r.ok) { const st = r.status; S.sync = null; throw new Error(st === 401 ? "Tokeni i GitHub nuk vlen. Dërgoni lidhjen e re nga kompjuteri." : st === 404 ? "Të dhënat nuk u gjetën ende në GitHub. Prisni pak dhe provoni përsëri." : "GitHub " + st); }
+  const xml = dec.decode(await cloudDecrypt(S.ck, new Uint8Array(await r.arrayBuffer())));
+  S.etag = r.headers.get("ETag");
+  S.outbox = S.outbox || []; S.drafts = S.drafts || {};
+  S.loaded = new Date().toISOString();
+  applySnapshot(xml);
+  const salt = crypto.getRandomValues(new Uint8Array(16)); S.key = await aesKey(used, salt); S.kSalt = bytesToB64(salt);
+  await persist();
+  lsSet("pkml.has", "1");
+  try { history.replaceState(null, "", location.pathname + location.search + "#lista"); } catch (e) { location.hash = "lista"; }
+  S.tab = "lista"; S.syncOk = Date.now();
+  startApp();
+  toast("Telefoni u lidh me kompjuterin");
+}
+function pairGate(code) {
+  passwordGate("Lidhja me kompjuterin", "Shkruani fjalëkalimin e programit Prezenca KML. Pas kësaj telefoni rifreskohet vetë sa herë ruani në kompjuter, dhe ndryshimet e listës këtu shkojnë vetë në kompjuter.",
+    async pw => pairWith(code, pw), '<button class="btn ghost" id="backBtn">Anulo</button>');
+  $("#backBtn").addEventListener("click", () => { try { history.replaceState(null, "", location.pathname); } catch (e) { } boot(); });
+}
+function codeFromText(t) { const m = String(t || "").match(/lidh=([A-Za-z0-9_-]{40,})/) || String(t || "").trim().match(/^([A-Za-z0-9_-]{80,})$/); return m ? m[1] : null; }
+async function askNewPassword() {
+  openSheet(`<div class="grab"></div><h2 style="font-size:22px">Fjalëkalimi i programit</h2>
+    <p class="muted" style="margin:0">Fjalëkalimi i programit në kompjuter është ndryshuar. Shkruani fjalëkalimin e ri që telefoni të vazhdojë të rifreskohet.</p>
+    <form id="npForm" class="field"><input type="password" id="npIn" autocomplete="current-password" aria-label="Fjalëkalimi i ri"><div class="err" id="npErr"></div>
+    <div class="actions"><button type="button" class="btn" data-act="close">Anulo</button><button class="btn primary" id="npBtn">Vazhdo</button></div></form>`);
+  $("#npForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const pw = $("#npIn").value; $("#npErr").textContent = ""; $("#npBtn").disabled = true;
+    try {
+      const k = await cloudKeys(pw, b64ToBytes(S.sync.salt));
+      const r = await gh("GET", "data/snapshot.bin", { raw: true });
+      if (!r.ok) throw new Error("GitHub " + r.status);
+      const xml = dec.decode(await cloudDecrypt(k, new Uint8Array(await r.arrayBuffer())).catch(() => { throw new Error("Fjalëkalimi nuk është i saktë."); }));
+      S.ck = k; S.needPw = false; S.pwUsed = pw; S.etag = r.headers.get("ETag");
+      const salt = crypto.getRandomValues(new Uint8Array(16)); S.key = await aesKey(pw, salt); S.kSalt = bytesToB64(salt);
+      // ndryshimet qe s'jane derguar ende enkriptohen me celesin e ri
+      applySnapshot(xml); closeSheet(); await persist(); syncNow(); toast("U lidh përsëri");
+    } catch (err) { $("#npErr").textContent = err.message || String(err); $("#npBtn").disabled = false; }
+  });
+}
+
+/* ---------------- ekranet e hyrjes ---------------- */
+function showGate(html) {
+  $("#top").hidden = true; $("#tabs").hidden = true; $("#sendbar").hidden = true;
+  $("#main").innerHTML = '<div class="gate"><div class="wrap">' + html + "</div></div>";
+}
+function welcome(msg) {
+  const zip = `<ol class="steps">
+      <li>Në email-in e sotëm prekni bashkëngjitjen <b>Kopje_e_plote_….zip</b> dhe ruajeni (Save to Files / Shkarko).</li>
+      <li>Shtypni <b>Zgjidh kopjen</b> më poshtë dhe zgjidhni skedarin.</li>
+      <li>Shkruani fjalëkalimin e programit Prezenca KML.</li>
+    </ol>
+    <label class="btn${HOSTED ? "" : " primary"} filebtn" style="height:48px;font-size:16px">Zgjidh kopjen (.zip)<input type="file" id="fileIn" accept=".zip,.xml,application/zip"></label>`;
+  const pair = `<div class="card" style="display:flex;flex-direction:column;gap:10px">
+      <h3>Lidhu me kompjuterin</h3>
+      <p class="muted" style="margin:0">Në kompjuter: Cilësimet → Telefoni → "Dërgo lidhjen në telefon". Në email-in që vjen, mbani shtypur butonin → <b>Copy Link</b> (Kopjo lidhjen) dhe ngjiteni këtu.</p>
+      <input type="text" id="pairIn" placeholder="Ngjitni lidhjen nga email-i" autocomplete="off" aria-label="Lidhja nga email-i" style="height:44px;border-radius:10px;border:1px solid var(--line);background:var(--surface);padding:0 12px">
+      <button class="btn primary" id="pairBtn" style="height:46px">Lidhu</button>
+    </div>`;
+  showGate(`
+    <span class="badge" style="align-self:flex-start">KML</span>
+    <h1>Prezenca në telefon</h1>
+    ${HOSTED
+      ? `<p class="lead">Lidheni telefonin me programin në kompjuter. Pastaj lista, raportet dhe EC rifreskohen vetë, dhe ndryshimet që bëni këtu ruhen vetë në kompjuter.</p>
+         <div class="err" id="gateErr">${esc(msg || "")}</div>${pair}
+         <p class="eyebrow" style="margin:8px 0 0">Ose pa lidhje: hapni kopjen e email-it</p>${zip}`
+      : `<p class="lead">Hapni kopjen rezervë që programi ju dërgon çdo ditë me email (<b>Kopje_e_plote_….zip</b>). Të dhënat mbeten vetëm në këtë telefon.</p>${zip}
+         <div class="err" id="gateErr">${esc(msg || "")}</div>`}
+    <button class="btn ghost" id="demoBtn">Shiko si duket me të dhëna shembull</button>
+  `);
+  $("#fileIn").addEventListener("change", e => { const f = e.target.files[0]; if (f) onFile(f); });
+  const pb = $("#pairBtn");
+  if (pb) pb.addEventListener("click", () => { const c = codeFromText($("#pairIn").value); if (!c) { $("#gateErr").textContent = "Kjo nuk duket si lidhja nga programi. Kopjoni të gjithë lidhjen nga email-i."; return; } pairGate(c); });
+  $("#demoBtn").addEventListener("click", () => { loadDemo(); });
+}
+function passwordGate(title, lead, onOk, extra) {
+  showGate(`
+    <span class="badge" style="align-self:flex-start">${esc(S.db ? S.db.njesia : "KML")}</span>
+    <h1>${esc(title)}</h1>
+    <p class="lead">${lead}</p>
+    <form id="pwForm" class="field" autocomplete="off">
+      <label for="pwIn">Fjalëkalimi i programit (ose kodi i rikthimit)</label>
+      <input type="password" id="pwIn" autocomplete="current-password" enterkeyhint="go">
+      <div class="err" id="gateErr"></div>
+      <button class="btn primary" id="pwBtn" style="height:48px">Hap</button>
+    </form>
+    ${extra || ""}
+  `);
+  const f = $("#pwForm"), inp = $("#pwIn");
+  setTimeout(() => { try { inp.focus(); } catch (e) { } }, 50);
+  f.addEventListener("submit", async e => {
+    e.preventDefault();
+    const b = $("#pwBtn"); b.disabled = true; b.textContent = "Duke hapur…"; $("#gateErr").textContent = "";
+    try { await onOk(inp.value); }
+    catch (err) { $("#gateErr").textContent = err.message || String(err); b.disabled = false; b.textContent = "Hap"; inp.select(); }
+  });
+}
+async function onFile(file) {
+  try {
+    const buf = new Uint8Array(await file.arrayBuffer());
+    let bytes = /\.xml$/i.test(file.name) ? buf : await unzipFind(buf, n => /(^|\/)prezenca\.xml$/i.test(n));
+    if (!bytes) throw new Error("Në .zip nuk u gjet prezenca.xml. Zgjidhni skedarin Kopje_e_plote_….zip nga email-i.");
+    const xml = dec.decode(bytes);
+    const db = parseDb(xml);
+    const prevDrafts = S.drafts, prevSent = S.sent;
+    const accept = async (keySecret) => {
+      S.xml = xml; S.db = db; S.file = file.name; S.loaded = new Date().toISOString(); S.demo = false;
+      // ndryshimet e derguara qe tashme jane te regjistruara ne kompjuter hiqen
+      S.drafts = prevDrafts || {}; S.sent = prevSent || {};
+      for (const d of Object.keys(S.drafts)) if (db.dayMap.has(d) && S.sent[d]) { delete S.drafts[d]; delete S.sent[d]; }
+      if (keySecret) { const salt = crypto.getRandomValues(new Uint8Array(16)); S.key = await aesKey(keySecret, salt); S.kSalt = bytesToB64(salt); }
+      else { S.key = null; S.kSalt = null; }
+      await persist();
+      lsSet("pkml.has", "1");
+      startApp();
+      toast("Kopja e " + (lastSaved() ? fmtD(lastSaved()) : "programit") + " u hap");
+    };
+    if (db.hash) {
+      S.db = db;
+      passwordGate("Fjalëkalimi", "Kjo kopje është e mbrojtur me fjalëkalimin e programit Prezenca KML. Pas hapjes, të dhënat ruhen në telefon të enkriptuara me të njëjtin fjalëkalim.",
+        async pw => {
+          if (await checkPc(pw, db.hash, db.salt)) return accept(pw);
+          const c = normCode(pw);
+          if (db.rhash && c && await checkPc(c, db.rhash, db.rsalt)) return accept(c);
+          throw new Error("Fjalëkalimi nuk është i saktë.");
+        }, '<button class="btn ghost" id="backBtn">Kthehu</button>');
+      $("#backBtn").addEventListener("click", () => { S.db = null; boot(); });
+    } else await accept(null);
+  } catch (e) { welcome(e.message || String(e)); }
+}
+function lockNow() {
+  if (!S.key) return;
+  S.db = null; S.xml = null; S.key = null; S.drafts = {}; S.sent = {};
+  closeSheet(); unlockGate();
+}
+function unlockGate() {
+  passwordGate("Prezenca KML", "Të dhënat në këtë telefon janë të kyçura. Shkruani fjalëkalimin e programit.",
+    async pw => {
+      const p = await readStored(pw); usePayload(p);
+      if (S.sync) { S.ck = await cloudKeys(S.pwUsed, b64ToBytes(S.sync.salt)); S.needPw = false; }
+      startApp(); syncNow();
+    },
+    '<button class="btn ghost" id="wipeBtn">Fshi të dhënat nga ky telefon</button><div id="wipeAsk"></div>');
+  $("#wipeBtn").addEventListener("click", () => {
+    $("#wipeAsk").innerHTML = '<div class="banner bad"><span>Të fshihen kopja dhe ndryshimet e padërguara nga ky telefon?</span><button class="btn small" id="wipeYes">Po, fshiji</button></div>';
+    $("#wipeYes").addEventListener("click", async () => { await idbDel("data"); lsSet("pkml.has", ""); S.drafts = {}; S.sent = {}; welcome(); });
+  });
+}
+
+/* ---------------- shembulli (emra te sajuar) ---------------- */
+function loadDemo() {
+  const t = todayISO(), y = addDays(t, -1);
+  const st = [["SH", "Shërbim", "Shërbim Repart", "", false, true, "#F5C542"], ["PSH", "Pushim shërbimi", "P.shërbimi", "", false, false, "#C9B458"], ["Lz", "Leje e zakonshme", "Leje", "", true, false, "#5B9BD5"],
+    ["Raport", "Raport mjekësor", "Raport", "", true, false, "#E07B91"], ["m", "Mungesë", "Mungesë", "", true, false, "#C0392B"], ["Kurs b.v", "Kurs brenda vendit", "Kurse/ b/vendi", "", true, false, "#3FB0A0"],
+    ["Mision", "Mision", "Mision", "", true, false, "#9B7BC9"], ["EC", "Emergjenca Civile", "SH, J Reparti", "(EC)", true, false, "#E67E22"]];
+  const tg = ["Komanda e kompanisë", "Toga e mortajave 81mm", "Toga e zbulimit"];
+  const ppl = [["Toger", "Arben", "Berisha", 0], ["Kapter", "Besnik", "Gashi", 0], ["N/Toger", "Gent", "Krasniqi", 1], ["N/Tetar", "Ilir", "Leka", 1], ["Ushtar IV", "Driton", "Shehu", 1],
+    ["Ushtar III", "Erion", "Bajrami", 1], ["Ushtar II", "Fatos", "Rama", 1], ["Ushtar I", "Klajdi", "Meta", 1], ["Ushtar IV", "Lorenc", "Zeneli", 1], ["N/Toger", "Mirel", "Halili", 2],
+    ["Tetar", "Nertil", "Kurti", 2], ["Ushtar II", "Olsi", "Prifti", 2], ["Ushtar I", "Petrit", "Mehmeti", 2], ["Ushtar IV", "Redi", "Daci", 2], ["Ushtar III", "Saimir", "Veseli", 2], ["Ushtar I", "Taulant", "Bushati", 2]];
+  const sts = { 3: ["Lz", addDays(t, 4)], 6: ["Mision", addDays(t, 20)], 7: ["SH", null], 10: ["Raport", addDays(t, -1)], 12: ["Kurs b.v", addDays(t, 2)], 14: ["EC", addDays(t, 1)] };
+  let x = '<PrezencaKML><Settings><Njesia>KML</Njesia><EmriPlote>Kompania (shembull)</EmriPlote><Togat>' + tg.join("\n") + "</Togat></Settings><Statuset>";
+  for (const s of st) x += `<Status Kodi="${s[0]}" Pershkrimi="${s[1]}" Grupi="${s[2]}" Prapashtesa="${s[3]}" KerkonAfat="${s[4]}" TreVakte="${s[5]}" Ngjyra="${s[6]}"/>`;
+  x += '</Statuset><Gradat>';
+  for (const g of [["Ushtar I", 3], ["Ushtar II", 3], ["Ushtar III", 3], ["Ushtar IV", 3], ["N/Tetar", 2], ["Tetar", 2], ["Kapter", 2], ["N/Toger", 1], ["Toger", 1]]) x += `<Grada Grada="${g[0]}" Kategoria="${g[1]}"/>`;
+  x += "</Gradat><Efektivi>";
+  ppl.forEach((p, i) => { x += `<Person Id="${i + 1}" Grada="${p[0]}" Emri="${p[1]}" Mbiemri="${p[2]}" Toga="${tg[p[3]]}" Aktiv="true" Rendi="${i + 1}" Funksioni="" Telefoni="" Atesia=""/>`; });
+  x += `</Efektivi><Regjistri><Dita d="${y}">`;
+  ppl.forEach((p, i) => { const s = sts[i + 1]; x += `<e p="${i + 1}" g="${p[0]}" n="${p[1]}" m="${p[2]}" s="${s ? s[0] : "Prezent"}"${s && s[1] ? ' a="' + s[1] + '"' : ""}/>`; });
+  x += `</Dita></Regjistri><EC><Operacionet><Op Nr="1" Lloji="Zjarr" Qarku="Shkodër" Vendi="Shembull" Fillimi="${addDays(t, -40)}" Mbarimi="${addDays(t, -36)}"/><Op Nr="2" Lloji="Përmbytje" Qarku="Lezhë" Vendi="Shembull" Fillimi="${addDays(t, -2)}"/></Operacionet><Pjesemarrja>`;
+  [[5, 1], [6, 1], [8, 1], [14, 2], [15, 2]].forEach((q, i) => { x += `<P Id="${i + 1}" p="${q[0]}" op="${q[1]}"/>`; });
+  x += "</Pjesemarrja></EC></PrezencaKML>";
+  S.xml = x; S.db = parseDb(x); S.demo = true; S.key = null; S.drafts = {}; S.sent = {}; S.file = "shembull"; S.loaded = new Date().toISOString();
+  startApp();
+}
+
+/* ---------------- aplikacioni ---------------- */
+function startApp() {
+  $("#top").hidden = false; $("#tabs").hidden = false;
+  $("#unit").textContent = S.db.njesia;
+  const h = (location.hash || "").replace("#", "");
+  if (TABS.includes(h)) S.tab = h;
+  render();
+}
+function setTab(t) { S.tab = t; S.selMode = false; S.sel.clear(); try { history.replaceState(null, "", "#" + t); } catch (e) { location.hash = t; } render(); window.scrollTo(0, 0); }
+function setDate(d) { if (!d) return; S.date = d; S.sel.clear(); render(); }
+function render() {
+  if (!S.db) return;
+  const d = S.date, today = todayISO();
+  $("#ttl").textContent = TAB_T[S.tab];
+  const ls = lastSaved();
+  const kh = S.db.syncKoha ? S.db.syncKoha.replace(/^(\d{4})-(\d\d)-(\d\d)T(\d\d:\d\d).*$/, "$3.$2 $4") : "";
+  $("#sub").innerHTML = (S.demo ? '<span class="demo-flag">Shembull</span> ' : "") + esc(S.db.emri || S.db.njesia) +
+    (S.sync ? " · ☁ " + (S.syncErr || S.needPw ? "pa lidhje" : "nga kompjuteri " + esc(kh)) : ls && !S.demo ? " · kopja deri " + fmtS(ls) : "");
+  $("#dText").innerHTML = esc(dita(d) + ", " + fmtD(d)) + (d !== today ? '<span class="past">' + (d < today ? "e kaluar" : "e ardhme") + "</span>" : "");
+  $("#dInput").value = d;
+  $("#datebar").hidden = S.tab === "ec" || S.tab === "efektivi";
+  for (const b of document.querySelectorAll(".tab")) b.setAttribute("aria-current", b.dataset.tab === S.tab ? "page" : "false");
+  const v = { lista: viewLista, raporti: viewRaporti, paneli: viewPaneli, efektivi: viewEfektivi, ec: viewEc }[S.tab]();
+  const demo = S.demo ? '<div class="banner warn"><span><b>Të dhëna shembull</b> me emra të sajuar. Hapni kopjen tuaj nga email-i për të parë efektivin e vërtetë.</span><label class="btn small primary filebtn">Hap kopjen tuaj<input type="file" id="fileIn3" accept=".zip,.xml,application/zip"></label></div>' : "";
+  $("#main").innerHTML = '<div class="wrap">' + demo + v + "</div>";
+  const f3 = $("#fileIn3"); if (f3) f3.addEventListener("change", e => { const f = e.target.files[0]; if (f) onFile(f); });
+  const sb = $("#sendbar");
+  // me sinkronizim ndryshimet shkojne vete; butoni mbetet vetem per "Zgjidh disa"
+  sb.hidden = S.tab !== "lista" || (!!S.sync && !S.selMode);
+  if (S.tab === "lista") {
+    const n = (S.drafts[d] && Object.keys(S.drafts[d]).length) || 0;
+    $("#sendBtn").textContent = S.selMode ? (S.sel.size ? "Vendos statusin (" + S.sel.size + ")" : "Zgjidhni efektivët") : (n ? "Dërgo listën te kompjuteri (" + ndr(n) + ")" : "Dërgo listën te kompjuteri");
+    $("#sendBtn").disabled = S.selMode && !S.sel.size;
+  }
+}
+
+function stCell(r, date) {
+  const s = norm(r.s);
+  let af = "";
+  if (r.a) {
+    const dd = diffDays(r.a, date);
+    af = `<small class="${dd < 0 ? "late" : dd <= 3 ? "soon" : ""}">deri ${fmtS(r.a)}${dd < 0 ? " · mbaroi" : ""}</small>`;
+  } else if (s) { const sd = sdef(s); if (!sd || sd.afat) af = '<small class="soon">pa afat</small>'; }
+  if (!s) return `<span class="st prez"><span>Prezent</span>${af}</span>`;
+  return `<span class="st" style="--c:${esc(stColor(s))}"><span>${esc(s)}</span>${af}</span>`;
+}
+
+function viewLista() {
+  const d = S.date, day = dayRows(d), rep = compute(day.rows);
+  const out = [];
+  out.push(`<div class="stats">
+    <div class="stat"><div class="v">${rep.orgT}</div><div class="l">Organikë</div></div>
+    <div class="stat ok"><div class="v">${rep.prezT}</div><div class="l">Prezent · ${pct(rep.prezT, rep.orgT)}%</div></div>
+    <div class="stat bad"><div class="v">${rep.mungT}</div><div class="l">Mungojnë</div></div></div>`);
+  const pills = [];
+  if (day.saved) pills.push('<span class="pill ok">Ruajtur në kompjuter</span>');
+  else if (day.noRecord) pills.push('<span class="pill bad">Pa regjistrim për këtë datë</span>');
+  else if (day.from) pills.push('<span class="pill">Marrë nga ' + fmtS(day.from) + "</span>");
+  if (S.sync) pills.push.apply(pills, syncPills(d));
+  else if (day.changes) pills.push('<span class="pill olive">' + ndr(day.changes) + " në telefon</span>");
+  if (S.needPw) out.push('<div class="banner bad"><span>Fjalëkalimi i programit është ndryshuar në kompjuter.</span><button class="btn small" data-act="newPw">Shkruaje</button></div>');
+  if (!S.sync && S.sent[d]) pills.push(S.sent[d] === tokenHash(d) ? '<span class="pill ok">Dërguar te kompjuteri</span>' : '<span class="pill warn">Ndryshuar pas dërgimit</span>');
+  if (pills.length) out.push('<div class="pills">' + pills.join("") + "</div>");
+  const ls = lastSaved();
+  if (!S.demo && !S.sync && ls && diffDays(todayISO(), ls) > 1) out.push(`<div class="banner warn"><span>Kopja ka të dhënat deri më <b>${fmtD(ls)}</b>. Për listën e saktë ngarkoni kopjen e fundit nga email-i.</span><button class="btn small" data-act="reload">Ngarko</button></div>`);
+  const expired = day.rows.filter(r => r.a && r.a < d && norm(r.s));
+  if (expired.length) out.push(`<div class="banner bad"><span><b>${expired.length}</b> me afat të mbaruar</span><button class="btn small" data-act="clearExpired">Hiq statuset</button></div>`);
+  const togat = [...new Set(day.rows.map(r => togaOf(r.pid)).filter(Boolean))];
+  out.push(`<div class="tools"><input class="search" id="q" type="search" placeholder="Kërko emrin…" value="${esc(S.q)}" aria-label="Kërko"><button class="btn${S.selMode ? " primary" : ""}" data-act="selMode">${S.selMode ? "Mbaro" : "Zgjidh disa"}</button></div>`);
+  out.push('<div class="chips">' + ['<button class="chip" data-act="toga" data-t="" aria-pressed="' + (!S.toga) + '">Të gjitha</button>'].concat(togat.map(t => `<button class="chip" data-act="toga" data-t="${esc(t)}" aria-pressed="${S.toga === t}">${esc(t)}</button>`)).join("") + "</div>");
+  const q = plain(S.q);
+  const rows = day.rows.map((r, i) => Object.assign({ i: i + 1 }, r)).filter(r => (!S.toga || togaOf(r.pid) === S.toga) && (!q || plain(r.emri + " " + r.mbiemri + " " + r.grada).includes(q)));
+  out.push('<div class="list">' + (rows.length ? rows.map(r => {
+    const sel = S.sel.has(r.pid);
+    return `<button class="row${r.changed ? " changed" : ""}${sel ? " sel" : ""}" data-act="${S.selMode ? "sel" : "edit"}" data-pid="${r.pid}">
+      ${S.selMode ? '<span class="check"></span>' : `<span class="nr">${r.i}</span>`}
+      <span class="who"><b>${esc(emri(r))}</b><small>${esc(r.grada)}${togaOf(r.pid) ? " · " + esc(togaOf(r.pid)) : ""}</small></span>
+      ${stCell(r, d)}</button>`;
+  }).join("") : '<div class="row"><span></span><span class="muted">Asnjë efektiv nuk përputhet me kërkimin.</span><span></span></div>') + "</div>");
+  return out.join("");
+}
+
+function viewRaporti() {
+  const d = S.date, day = dayRows(d), rep = compute(day.rows);
+  const tr = (lab, n, cls) => `<tr class="${cls || ""}"><td>${lab}</td><td>${n[0]}</td><td>${n[1]}</td><td>${n[2]}</td><td><b>${n[0] + n[1] + n[2]}</b></td></tr>`;
+  let rows = tr("Organikë", rep.org, "tot");
+  for (const g of rep.rows) {
+    const n = g.n[0] + g.n[1] + g.n[2];
+    rows += tr(esc(g.g), g.n, n ? "" : "zero");
+    if (n) rows += `<tr><td class="names" colspan="5">${esc(g.emrat[0].concat(g.emrat[1], g.emrat[2]).join(", "))}</td></tr>`;
+  }
+  rows += tr("Mungojnë", rep.mung, "tot") + tr("Prezent", rep.prez, "tot");
+  return `
+    ${day.changes ? '<div class="banner info"><span>Raporti përfshin <b>' + ndr(day.changes) + "</b> të bëra në telefon që s'janë ende në kompjuter.</span></div>" : ""}
+    <div class="card">
+      <div class="eyebrow">${esc(S.db.njesia)} · ${esc(dita(d))}</div>
+      <h2>Gjendja e personelit për datën ${fmtD(d)}</h2>
+      <div class="tbl-wrap" style="margin-top:10px"><table class="rep"><thead><tr><th>Statusi</th><th>Of.</th><th>N/Of.</th><th>Usht.</th><th>Shuma</th></tr></thead><tbody>${rows}</tbody></table></div>
+    </div>
+    <div class="grid2">
+      <div class="tile"><div class="v">${rep.neRresht}</div><div class="l">Në rresht (prezent + shërbim)</div></div>
+      <div class="tile"><div class="v">${rep.treVakte}</div><div class="l">Forca e ushqimit · 3 vakte</div></div>
+    </div>
+    <p class="muted" style="font-size:13px">Raporti zyrtar për printim (me stemën) bëhet në programin në kompjuter.</p>`;
+}
+
+function barCls(p) { return p >= .8 ? "" : p >= .6 ? "mid" : "low"; }
+function viewPaneli() {
+  const d = S.date, day = dayRows(d), rep = compute(day.rows);
+  const alerts = day.rows.filter(r => paralajmerim(r, d) !== "");
+  const out = [];
+  out.push(`<div class="grid2">
+    <div class="tile"><div class="v">${rep.efektivi}</div><div class="l">Efektivi · Of ${rep.org[0]} · N/Of ${rep.org[1]} · Usht ${rep.org[2]}</div></div>
+    <div class="tile ok"><div class="v">${rep.prezT}</div><div class="l">Prezent · ${pct(rep.prezT, rep.orgT)}% e organikës</div></div>
+    <div class="tile bad"><div class="v">${rep.mungT}</div><div class="l">Mungojnë</div></div>
+    <div class="tile"><div class="v">${rep.neRresht}</div><div class="l">Në rresht</div></div>
+    <div class="tile"><div class="v">${rep.treVakte}</div><div class="l">3 vakte</div></div>
+    <div class="tile ${alerts.length ? "warn" : "ok"}"><div class="v">${alerts.length}</div><div class="l">${alerts.length ? "Paralajmërime" : "Çdo gjë në rregull"}</div></div></div>`);
+  const cat = ["Oficerë", "N/Oficerë", "Ushtarë"];
+  out.push('<div class="card"><h3>Gatishmëria sipas kategorisë</h3><div class="bars" style="margin-top:10px">' + cat.map((c, i) => {
+    const p = rep.org[i] ? rep.prez[i] / rep.org[i] : 0;
+    return `<div class="bar-row"><span class="lab">${c}</span><span class="val">${rep.prez[i]} / ${rep.org[i]} · ${Math.round(p * 100)}%</span><div class="bar"><i class="${barCls(p)}" style="width:${Math.round(p * 100)}%"></i></div></div>`;
+  }).join("") + "</div></div>");
+  const togat = S.db.togat.length ? S.db.togat : [...new Set(day.rows.map(r => togaOf(r.pid)).filter(Boolean))];
+  const tRows = togat.concat([""]).map(t => {
+    const inT = day.rows.filter(r => t === "" ? !togat.includes(togaOf(r.pid)) : togaOf(r.pid) === t);
+    if (t === "" && !inT.length) return "";
+    const pr = inT.filter(r => !norm(r.s)).length, p = inT.length ? pr / inT.length : 0;
+    return `<div class="bar-row"><span class="lab">${esc(t || "Pa caktuar")}</span><span class="val">${pr} / ${inT.length}</span><div class="bar"><i class="${barCls(p)}" style="width:${Math.round(p * 100)}%"></i></div></div>`;
+  }).join("");
+  out.push('<div class="card"><h3>Gjendja sipas togave</h3><div class="bars" style="margin-top:10px">' + tRows + "</div></div>");
+  const maxG = Math.max(1, ...rep.rows.map(r => r.n[0] + r.n[1] + r.n[2]));
+  const gRows = rep.rows.filter(r => r.n[0] + r.n[1] + r.n[2] > 0).map(r => {
+    const n = r.n[0] + r.n[1] + r.n[2];
+    return `<div class="bar-row"><span class="lab">${esc(r.g)}</span><span class="val">${n} · Of ${r.n[0]} · N/Of ${r.n[1]} · Usht ${r.n[2]}</span><div class="bar"><i class="amt" style="width:${Math.round(n * 100 / maxG)}%"></i></div></div>`;
+  }).join("");
+  out.push('<div class="card"><h3>Mungesat sipas arsyes</h3><div class="bars" style="margin-top:10px">' + (gRows || '<span class="muted">Nuk mungon askush.</span>') + "</div></div>");
+  const track = day.rows.filter(r => norm(r.s) || r.a).sort((a, b) => (a.a ? 0 : 1) - (b.a ? 0 : 1) || (a.a || "").localeCompare(b.a || "") || norm(a.s).localeCompare(norm(b.s)));
+  out.push('<div class="card"><div class="sec-title"><h3>Mungesat dhe afatet</h3><small>' + track.length + "</small></div>" +
+    (track.length ? '<div class="list" style="margin-top:10px">' + track.map(r => {
+      const w = paralajmerim(r, d);
+      return `<button class="row" data-act="kartela" data-pid="${r.pid}"><span class="nr"></span><span class="who"><b>${esc(emri(r))}</b><small>${esc(r.grada)}${w ? ' · <span style="color:var(--' + (/mbaruar|Prezent/.test(w) ? "bad" : "warn") + ');font-weight:600">' + esc(w) + "</span>" : ""}</small></span>${stCell(r, d)}</button>`;
+    }).join("") + "</div>" : '<p class="muted">Asnjë mungesë.</p>') + "</div>");
+  return out.join("");
+}
+
+function viewEfektivi() {
+  const t = todayISO(), day = dayRows(t), byId = new Map(day.rows.map(r => [r.pid, r]));
+  const q = plain(S.efQ);
+  const act = S.db.persons.filter(p => p.aktiv).sort((a, b) => a.rendi - b.rendi || a.id - b.id).filter(p => !q || plain(emri(p) + " " + p.grada + " " + p.toga + " " + p.funksioni).includes(q));
+  const groups = new Map();
+  for (const p of act) { const k = p.toga || "Pa caktuar"; if (!groups.has(k)) groups.set(k, []); groups.get(k).push(p); }
+  const order = S.db.togat.filter(x => groups.has(x)).concat([...groups.keys()].filter(x => !S.db.togat.includes(x)));
+  let html = `<div class="tools"><input class="search" id="efq" type="search" placeholder="Kërko emrin, gradën, funksionin…" value="${esc(S.efQ)}" aria-label="Kërko efektivin"></div>`;
+  html += '<p class="muted" style="font-size:13px;margin:0">Gjendja sot, ' + fmtD(t) + ". Prekni një emër për kartelën.</p>";
+  html += '<div class="list">' + order.map(g => {
+    const ps = groups.get(g), pr = ps.filter(p => { const r = byId.get(p.id); return r && !norm(r.s); }).length;
+    return `<div class="group-h"><span>${esc(g)}</span><span class="num">${pr} / ${ps.length} prezent</span></div>` + ps.map(p => {
+      const r = byId.get(p.id) || { s: "", a: null };
+      return `<button class="row" data-act="kartela" data-pid="${p.id}"><span class="nr"></span><span class="who"><b>${esc(emri(p))}</b><small>${esc(p.grada)}${p.funksioni ? " · " + esc(p.funksioni) : ""}</small></span>${stCell(r, t)}</button>`;
+    }).join("");
+  }).join("") + "</div>";
+  return html;
+}
+
+function kartela(pid) {
+  const p = S.db.pById.get(pid); if (!p) return;
+  const t = todayISO(), r = dayRows(S.tab === "efektivi" ? t : S.date).rows.find(x => x.pid === pid) || { s: "", a: null };
+  const hist = [];
+  for (const d of S.db.days) for (const e of d.e) if (e.p === pid) hist.push({ d: d.d, s: (!e.s || e.s === "Prezent") ? "Prezent" : e.s, a: e.a });
+  const per = [];
+  for (const h of hist) { const c = per[per.length - 1]; if (c && c.s.toLowerCase() === h.s.toLowerCase()) { c.deri = h.d; c.n++; c.a = h.a; } else per.push({ s: h.s, nga: h.d, deri: h.d, n: 1, a: h.a }); }
+  const y = t.slice(0, 4), counts = {};
+  for (const h of hist) if (h.d.startsWith(y)) counts[h.s] = (counts[h.s] || 0) + 1;
+  const ec = ecCalc(), ex = ec.pers.get(pid);
+  const cnt = Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([s, n]) => `<span class="pill" style="background:color-mix(in srgb, ${s === "Prezent" ? "var(--ok)" : esc(stColor(s))} 20%, var(--surface));color:var(--ink)">${esc(s)} · ${n}</span>`).join("");
+  openSheet(`<div class="grab"></div>
+    <div><div class="eyebrow">${esc(p.grada)} · ${esc(p.toga || "pa togë")}</div><h2 style="font-size:24px">${esc(emri(p))}</h2></div>
+    <div class="card"><dl class="kv">
+      <dt>Gjendja</dt><dd>${stCell(r, S.tab === "efektivi" ? t : S.date)}</dd>
+      ${p.funksioni ? `<dt>Funksioni</dt><dd>${esc(p.funksioni)}</dd>` : ""}
+      ${p.atesia ? `<dt>Atësia</dt><dd>${esc(p.atesia)}</dd>` : ""}
+      ${p.telefoni ? `<dt>Telefoni</dt><dd><span style="user-select:all">${esc(p.telefoni)}</span> <button class="btn small" data-act="copyTel" data-v="${esc(p.telefoni)}">Kopjo</button></dd>` : ""}
+      ${p.hyrja ? `<dt>Në repart nga</dt><dd>${fmtD(p.hyrja)}</dd>` : ""}
+    </dl></div>
+    <div class="card"><h3>Ditët e regjistruara në ${y}</h3><div class="pills" style="margin-top:8px">${cnt || '<span class="muted">Asnjë ditë e regjistruar.</span>'}</div></div>
+    <div class="card"><h3>Periudhat e fundit</h3>${per.length ? '<div class="tbl-wrap"><table class="rep" style="margin-top:6px"><thead><tr><th>Statusi</th><th>Nga</th><th>Deri</th><th>Ditë</th></tr></thead><tbody>' +
+      per.slice(-12).reverse().map(x => `<tr><td>${esc(x.s)}${x.a && x.s !== "Prezent" ? '<br><small class="muted">afati ' + fmtS(x.a) + "</small>" : ""}</td><td>${fmtS(x.nga)}</td><td>${fmtS(x.deri)}</td><td>${x.n}</td></tr>`).join("") + "</tbody></table></div>" : '<p class="muted">Nuk ka histori.</p>'}</div>
+    <div class="card"><h3>Emergjencat Civile</h3>${ex ? `<dl class="kv" style="margin-top:6px"><dt>Ditë gjithsej</dt><dd>${ex.diteGj}</dd><dt>Ditë në periudhë</dt><dd>${ex.diteP}</dd><dt>Operacione</dt><dd>${ex.ops.size}</dd><dt>Data e fundit</dt><dd>${fmtD(ex.fundit)}${ex.neOp ? ' <span class="pill warn">në operacion</span>' : ""}</dd></dl>` : '<p class="muted">Nuk ka marrë pjesë në EC.</p>'}</div>
+    <div class="actions"><button class="btn" data-act="close">Mbyll</button></div>`);
+}
+
+function viewEc() {
+  const c = ecCalc();
+  if (!c.ops.length) return '<div class="card"><h2>Emergjencat Civile</h2><p class="muted">Kopja nuk ka ende operacione EC. Shtoni ose importoni databazën EC në programin në kompjuter.</p></div>';
+  const stPill = s => s === "Në vazhdim" ? '<span class="pill warn">Në vazhdim</span>' : s === "I planifikuar" ? '<span class="pill">I planifikuar</span>' : '<span class="pill ok">Përfunduar</span>';
+  let h = `<div class="eyebrow">Periudha ${fmtD(c.N)} – ${fmtD(c.D)}</div>
+    <div class="grid2">
+      <div class="tile"><div class="v">${c.opNeP}</div><div class="l">Operacione në periudhë</div></div>
+      <div class="tile"><div class="v">${c.dnP}</div><div class="l">Ditë-njeri në operacione</div></div>
+      <div class="tile"><div class="v">${c.pjesP}</div><div class="l">Persona që kanë marrë pjesë</div></div>
+      <div class="tile"><div class="v">${(c.angazh * 100).toFixed(1)}%</div><div class="l">e efektivit aktiv të angazhuar</div></div>
+      <div class="tile ${c.neVazhdim.length ? "warn" : ""}"><div class="v">${c.neVazhdim.length}</div><div class="l">Operacione në vazhdim</div></div>
+      <div class="tile ${c.neOpSot.length ? "warn" : ""}"><div class="v">${c.neOpSot.length}</div><div class="l">Persona në operacion sot</div></div>
+    </div>`;
+  if (c.neOpSot.length) h += '<div class="card"><h3>Në operacion sot</h3><div class="list" style="margin-top:8px">' + c.neOpSot.map(x => {
+    const r = x.rows.find(z => z.ne);
+    return `<button class="row" data-act="kartela" data-pid="${x.person.id}"><span class="nr"></span><span class="who"><b>${esc(emri(x.person))}</b><small>${esc(x.person.grada)} · ${esc(r.op.kodi)} ${esc(r.op.o.lloji)} · ${esc(r.op.o.qarku)}</small></span><span class="st" style="--c:var(--warn)"><span>dita ${diffDays(todayISO(), r.nga) + 1}</span></span></button>`;
+  }).join("") + "</div></div>";
+  h += '<div class="card"><h3>Operacionet</h3><div class="ops" style="margin-top:6px">' + c.ops.slice().reverse().map(o => `
+    <details class="op"><summary><span class="code">${esc(o.kodi)}</span><span class="what">${esc(o.o.lloji)} · ${esc(o.o.qarku)}<small>${esc(o.o.vendi)} · ${fmtS(o.o.fillimi)}${o.fundi ? "–" + fmtS(o.fundi) : ""} · ${o.efektivi} persona · ${o.dn} ditë-njeri</small></span>${stPill(o.statusi)}</summary>
+    <ul class="pp">${o.rows.map(r => `<li><span>${esc(emri(r.person))}</span><span class="muted num">${fmtS(r.nga)}–${fmtS(r.deri)} · ${r.dite} d</span></li>`).join("") || '<li class="muted">Pa pjesëmarrës</li>'}</ul></details>`).join("") + "</div></div>";
+  if (c.top.length) h += '<div class="card"><h3>Më shumë ditë në EC (periudha)</h3><div class="bars" style="margin-top:10px">' + c.top.map(x =>
+    `<div class="bar-row"><span class="lab">${esc(emri(x.person))}</span><span class="val">${x.diteP} ditë · ${x.opsP.size} op.</span><div class="bar"><i class="amt" style="width:${Math.round(x.diteP * 100 / c.top[0].diteP)}%"></i></div></div>`).join("") + "</div></div>";
+  return h;
+}
+
+/* ---------------- fletet poshte ---------------- */
+function openSheet(html) {
+  clearTimeout(closeSheet.t);
+  const sh = $("#sheet");
+  $("#sheetBody").innerHTML = html;
+  sh.hidden = false;
+  requestAnimationFrame(() => requestAnimationFrame(() => sh.classList.add("open")));
+}
+function closeSheet() {
+  const sh = $("#sheet");
+  if (sh.hidden) return;
+  sh.classList.remove("open");
+  closeSheet.t = setTimeout(() => { sh.hidden = true; $("#sheetBody").innerHTML = ""; }, 220);
+}
+
+function editSheet(pids) {
+  const d = S.date, rows = dayRows(d).rows.filter(r => pids.includes(r.pid));
+  if (!rows.length) return;
+  const one = rows.length === 1 ? rows[0] : null;
+  let cur = one ? norm(one.s) : null, af = one ? one.a : null;
+  const opts = [{ kodi: "", pershkrimi: "Prezent", ngjyra: "var(--ok)" }].concat(S.db.statuset);
+  openSheet(`<div class="grab"></div>
+    <div>${one ? `<div class="eyebrow">${esc(one.grada)} · ${esc(togaOf(one.pid) || "")}</div><h2 style="font-size:22px">${esc(emri(one))}</h2>` : `<h2 style="font-size:22px">${rows.length} efektivë të zgjedhur</h2><p class="muted" style="margin:4px 0 0">${esc(rows.slice(0, 6).map(r => inicial(r.emri, r.mbiemri)).join(", "))}${rows.length > 6 ? "…" : ""}</p>`}</div>
+    <div class="stgrid" id="stgrid">${opts.map(s => `<button class="stb" data-s="${esc(s.kodi)}" style="--c:${esc(s.ngjyra)}" aria-pressed="${cur !== null && cur.toLowerCase() === s.kodi.toLowerCase()}"><b>${esc(s.kodi || "Prezent")}</b><small>${esc(s.pershkrimi)}</small></button>`).join("")}</div>
+    <div class="sheet-foot"><div class="field" id="afBox"><label for="afIn">Afati (deri më) <span id="afReq"></span></label>
+      <input type="date" id="afIn" value="${esc(af || "")}">
+      <div class="quick">${[1, 3, 7, 14, 30].map(n => `<button class="btn small" data-q="${n}">+${n} ditë</button>`).join("")}<button class="btn small" data-q="0">Pa afat</button></div></div>
+    <div class="actions"><button class="btn" data-act="close">Anulo</button><button class="btn primary" id="saveSt">Ruaj</button></div></div>`);
+  const body = $("#sheetBody"), afIn = $("#afIn");
+  const upd = () => {
+    const sd = sdef(cur);
+    $("#afReq").textContent = cur === null ? "" : !cur ? "(prezent – pa afat)" : (sd && !sd.afat) ? "(opsional)" : "(kërkohet)";
+    $("#afBox").style.opacity = cur === "" ? .45 : 1;
+    for (const b of body.querySelectorAll(".stb")) b.setAttribute("aria-pressed", cur !== null && b.dataset.s.toLowerCase() === cur.toLowerCase());
+  };
+  upd();
+  body.querySelector("#stgrid").addEventListener("click", e => { const b = e.target.closest(".stb"); if (!b) return; cur = b.dataset.s; if (!cur) afIn.value = ""; upd(); });
+  body.querySelector(".quick").addEventListener("click", e => { const b = e.target.closest("[data-q]"); if (!b) return; const n = +b.dataset.q; afIn.value = n ? addDays(d, n) : ""; if (cur === "" && n) { cur = null; } upd(); });
+  $("#saveSt").addEventListener("click", () => {
+    if (cur === null) { if (!one) { toast("Zgjidhni statusin"); return; } cur = norm(one.s); }
+    const a = cur ? (afIn.value || null) : null;
+    commitChanges(d, rows.map(r => ({ pid: r.pid, s: cur, a: a })));
+    S.sel.clear(); S.selMode = false;
+    closeSheet(); render();
+    const sd = sdef(cur);
+    if (cur && !a && (!sd || sd.afat)) toast("U ruajt – mos harroni afatin"); else toast("U ruajt në telefon");
+  });
+}
+
+function sendSheet() {
+  const d = S.date, text = sendText(d), to = S.db.emailTe;
+  const subj = "Lista ditore " + S.db.njesia + " " + fmtD(d);
+  openSheet(`<div class="grab"></div>
+    <div><div class="eyebrow">${esc(dita(d))}, ${fmtD(d)}</div><h2 style="font-size:22px">Dërgo listën te kompjuteri</h2></div>
+    <ol class="steps">
+      <li>Shtypni <b>Kopjo tekstin</b>.</li>
+      <li>Hapni email-in, shkruani një mesazh të ri për veten${to ? ` (<span style="user-select:all">${esc(to)}</span>)` : ""}, ngjitni tekstin dhe dërgojeni.</li>
+      <li>Në kompjuter: <b>Lista ditore → Nga telefoni</b>, ngjitni tekstin e email-it, kontrolloni listën dhe shtypni <b>Ruaj ditën</b>.</li>
+    </ol>
+    <textarea id="sendTxt" readonly aria-label="Teksti për email">${esc(text)}</textarea>
+    <div class="actions">
+      ${to ? `<a class="btn" href="mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(text)}">Hap email-in</a>` : ""}
+      <button class="btn" data-act="markSent">E dërgova</button>
+      <button class="btn primary" id="copyBtn">Kopjo tekstin</button>
+    </div>
+    <p class="muted" style="font-size:12px;margin:0">Kodi në fund (PKML1…) e lexon programi; mos e ndryshoni. Mund ta dërgoni edhe me WhatsApp/Viber te vetja.</p>`);
+  $("#copyBtn").addEventListener("click", () => {
+    const ta = $("#sendTxt");
+    const fallback = () => { ta.focus(); ta.select(); try { ta.setSelectionRange(0, ta.value.length); } catch (e) { } toast("Teksti u zgjodh – shtypni Copy"); };
+    try { navigator.clipboard.writeText(text).then(() => toast("Teksti u kopjua"), fallback); } catch (e) { fallback(); }
+  });
+}
+
+function menuSheet() {
+  const ls = S.db ? lastSaved() : null;
+  openSheet(`<div class="grab"></div>
+    <h2 style="font-size:22px">${esc(S.db.emri || S.db.njesia)}</h2>
+    <div class="card"><dl class="kv">
+      <dt>Kopja</dt><dd>${S.demo ? "Të dhëna shembull" : esc(S.file || "")}</dd>
+      ${ls ? `<dt>Dita e fundit e ruajtur</dt><dd>${fmtD(ls)}</dd>` : ""}
+      <dt>Efektivi aktiv</dt><dd>${S.db.persons.filter(p => p.aktiv).length}</dd>
+      <dt>Mbrojtja</dt><dd>${S.demo ? "–" : S.key ? "Të dhënat në telefon janë të enkriptuara me fjalëkalimin e programit" : "Programi në kompjuter nuk ka fjalëkalim; të dhënat në telefon nuk janë të kyçura"}</dd>
+    </dl></div>
+    ${S.sync ? `<div class="card"><h3>Sinkronizimi me kompjuterin</h3><dl class="kv" style="margin-top:6px">
+      <dt>Gjendja</dt><dd>${S.needPw ? "Duhet fjalëkalimi i ri" : S.syncErr ? esc(S.syncErr) : "Në rregull"}</dd>
+      <dt>Ruajtja e fundit në kompjuter</dt><dd>${S.db.syncKoha ? esc(S.db.syncKoha.replace("T", " ").slice(0, 16)) : "–"}</dd>
+      <dt>Kontrolli i fundit</dt><dd>${S.syncOk ? new Date(S.syncOk).toLocaleTimeString("sq-AL", { hour: "2-digit", minute: "2-digit" }) : "–"}</dd>
+      <dt>Ndryshime pa dërguar</dt><dd>${S.outbox.length}</dd></dl>
+      <div class="actions" style="justify-content:flex-start;margin-top:10px"><button class="btn primary" data-act="syncNow">Rifresko tani</button>${S.needPw ? '<button class="btn" data-act="newPw">Shkruaj fjalëkalimin</button>' : ""}<button class="btn" data-act="unpair">Shkëput</button></div><div id="unpairAsk"></div></div>` : ""}
+    <label class="btn${S.sync ? "" : " primary"} filebtn" style="height:46px">Ngarko kopjen e re (.zip)<input type="file" id="fileIn2" accept=".zip,.xml,application/zip"></label>
+    ${S.key ? '<button class="btn" data-act="lock" style="height:46px">Kyç tani</button>' : ""}
+    ${S.demo ? '<button class="btn" data-act="exitDemo" style="height:46px">Dil nga shembulli</button>' : '<button class="btn" data-act="wipe" style="height:46px">Fshi të dhënat nga ky telefon</button><div id="wipeAsk2"></div>'}
+    <p class="muted" style="font-size:13px;margin:0">${S.sync ? "Telefoni rifreskohet vetë sa herë ruani në kompjuter, dhe ndryshimet e listës këtu ruhen vetë në kompjuter (kur programi është i hapur dhe ka internet)." : "Çdo ditë programi në kompjuter ju dërgon me email kopjen e plotë. Ngarkojeni këtu për të parë gjendjen e fundit. Ndryshimet që bëni te Lista dërgohen te kompjuteri me \"Dërgo listën te kompjuteri\"."}</p>
+    ${S.sync ? '<button class="btn" data-act="manualSend" style="height:42px">Dërgo listën me email (pa sinkronizim)</button>' : ""}
+    <div class="actions"><button class="btn" data-act="close">Mbyll</button></div>`);
+  $("#fileIn2").addEventListener("change", e => { const f = e.target.files[0]; if (f) { closeSheet(); onFile(f); } });
+}
+
+/* ---------------- ngjarjet ---------------- */
+document.addEventListener("click", e => {
+  const tb = e.target.closest(".tab"); if (tb) { setTab(tb.dataset.tab); return; }
+  const b = e.target.closest("[data-act]"); if (!b) return;
+  const a = b.dataset.act, pid = +b.dataset.pid;
+  switch (a) {
+    case "edit": editSheet([pid]); break;
+    case "sel": if (S.sel.has(pid)) S.sel.delete(pid); else S.sel.add(pid); render(); break;
+    case "selMode": S.selMode = !S.selMode; S.sel.clear(); render(); break;
+    case "toga": S.toga = b.dataset.t; render(); break;
+    case "kartela": kartela(pid); break;
+    case "close": closeSheet(); break;
+    case "clearExpired": { const d = S.date; commitChanges(d, dayRows(d).rows.filter(r => r.a && r.a < d && norm(r.s)).map(r => ({ pid: r.pid, s: "", a: null }))); render(); toast("Statuset me afat të mbaruar u hoqën"); break; }
+    case "markSent": S.sent[S.date] = tokenHash(S.date); persistSoon(); closeSheet(); render(); toast("Shënuar si e dërguar"); break;
+    case "reload": menuSheet(); break;
+    case "lock": lockNow(); break;
+    case "exitDemo": closeSheet(); S.db = null; S.demo = false; welcome(); break;
+    case "wipe":
+      $("#wipeAsk2").innerHTML = '<div class="banner bad"><span>Të fshihen kopja dhe ndryshimet e padërguara nga ky telefon?</span><button class="btn small" data-act="wipeYes">Po, fshiji</button></div>'; break;
+    case "wipeYes": idbDel("data").then(() => { lsSet("pkml.has", ""); S.db = null; S.key = null; S.drafts = {}; S.sent = {}; S.sync = null; S.ck = null; S.outbox = []; closeSheet(); welcome(); }); break;
+    case "newPw": askNewPassword(); break;
+    case "syncNow": closeSheet(); toast("Duke rifreskuar…"); syncNow(true); break;
+    case "manualSend": closeSheet(); setTimeout(sendSheet, 250); break;
+    case "unpair": $("#unpairAsk").innerHTML = '<div class="banner bad"><span>Telefoni nuk do të rifreskohet më nga kompjuteri.</span><button class="btn small" data-act="unpairYes">Po, shkëput</button></div>'; break;
+    case "unpairYes": S.sync = null; S.ck = null; S.outbox = []; persist(); closeSheet(); render(); toast("Telefoni u shkëput"); break;
+    case "copyTel": try { navigator.clipboard.writeText(b.dataset.v).then(() => toast("Numri u kopjua"), () => toast(b.dataset.v)); } catch (err) { toast(b.dataset.v); } break;
+  }
+});
+document.addEventListener("input", e => {
+  if (e.target.id === "q") { S.q = e.target.value; const pos = e.target.selectionStart; render(); const q = $("#q"); if (q) { q.focus(); try { q.setSelectionRange(pos, pos); } catch (x) { } } }
+  if (e.target.id === "efq") { S.efQ = e.target.value; const pos = e.target.selectionStart; render(); const q = $("#efq"); if (q) { q.focus(); try { q.setSelectionRange(pos, pos); } catch (x) { } } }
+});
+$("#sheetBack").addEventListener("click", closeSheet);
+$("#menuBtn").addEventListener("click", () => { if (S.db) menuSheet(); });
+$("#dPrev").addEventListener("click", () => setDate(addDays(S.date, -1)));
+$("#dNext").addEventListener("click", () => setDate(addDays(S.date, 1)));
+$("#dToday").addEventListener("click", () => setDate(todayISO()));
+$("#dInput").addEventListener("change", e => setDate(e.target.value));
+$("#sendBtn").addEventListener("click", () => {
+  if (S.selMode) { if (S.sel.size) editSheet([...S.sel]); return; }
+  sendSheet();
+});
+window.addEventListener("hashchange", () => { const h = location.hash.replace("#", ""); if (S.db && TABS.includes(h) && h !== S.tab) { S.tab = h; render(); } });
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
+// kyçja automatike pas 5 minutash ne sfond
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) { S.hiddenAt = Date.now(); persist(); }
+  else if (S.key && S.hiddenAt && Date.now() - S.hiddenAt > 5 * 60 * 1000) lockNow();
+  else if (S.sync && S.ck) syncNow();
+});
+// rifreskimi automatik me kompjuterin
+setInterval(() => { if (!document.hidden && S.sync && S.ck) syncNow(); }, 20000);
+window.addEventListener("online", () => { if (S.sync && S.ck) syncNow(); });
+document.addEventListener("focusout", () => { if (S.renderLater) setTimeout(() => { const ae = document.activeElement; if (!(ae && ae.tagName === "INPUT" && $("#main").contains(ae))) { S.renderLater = false; render(); } }, 50); });
+
+async function boot() {
+  if (window.__PKML_TEST) { await window.__PKML_TEST(); return; }
+  const pair = codeFromText(location.hash.startsWith("#lidh=") ? location.hash : "");
+  let rec = null;
+  try { rec = await idbGet("data"); } catch (e) { rec = null; }
+  if (pair) { pairGate(pair); return; }
+  if (rec && rec.enc) { unlockGate(); return; }
+  if (rec) { try { usePayload(await readStored("")); startApp(); return; } catch (e) { } }
+  if (HOSTED) welcome(); else loadDemo();
+}
+boot();
+</script>
+
+<script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script>
+</body>
+</html>
